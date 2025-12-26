@@ -34,3 +34,8 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+# Documentation with secrets (do not commit)
+*_BERICHT.md
+*_REPORT.md
+*_DEPLOYMENT*.md
+*_INTEGRATION*.md

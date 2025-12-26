@@ -5,6 +5,7 @@
 import BetterSqlite3 from "better-sqlite3";
 import { randomUUID } from "crypto";
 import { initSettingsTables } from "./settings.js";
+import { initEmbeddingsTable } from "./embeddings.js";
 
 export interface Task {
   id: string;
@@ -112,6 +113,9 @@ export function initDatabase(): Database {
 
     // Initialize settings tables
     initSettingsTables(db);
+
+    // Initialize embeddings table
+    initEmbeddingsTable(db);
   } catch (error) {
     console.warn("SQLite unavailable, using in-memory fallback:", error);
     db = new BetterSqlite3(":memory:");
@@ -144,6 +148,9 @@ export function initDatabase(): Database {
 
     // Initialize settings tables in fallback
     initSettingsTables(db);
+
+    // Initialize embeddings table in fallback
+    initEmbeddingsTable(db);
   }
 
   return {
