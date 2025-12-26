@@ -6,6 +6,7 @@
 import express from "express";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { createServer } from "http";
 import { createHealthRouter } from "./api/health.js";
 import { createTaskRouter } from "./api/tasks.js";
 import { createAuditRouter } from "./api/audit.js";
@@ -13,6 +14,7 @@ import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
 import { createLinearRouter } from "./api/linear.js";
 import { handleSlackEvents } from "./api/slack-events.js";
+import { WebSocketManager } from "./websocket/server.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
 import { createEnforcementGate } from "./audit/enforcementGate.js";
@@ -67,10 +69,26 @@ async function main() {
     });
   });
 
+  // Create HTTP server
+  const server = createServer(app);
+
+  // Initialize WebSocket server
+  const wsManager = new WebSocketManager(server);
+
+  // Example: Broadcast agent status every 10 seconds
+  setInterval(() => {
+    wsManager.broadcastAgentStatus({
+      agentName: "ENGINEERING_LEAD_SUPERVISOR",
+      state: "idle",
+      currentTask: undefined,
+    });
+  }, 10000);
+
   // Start server
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
     console.log("📋 Dashboard: http://localhost:" + PORT);
+    console.log("🔌 WebSocket: ws://localhost:" + PORT + "/ws");
     console.log("📋 API Endpoints:");
     console.log("   GET  /api           - API info");
     console.log("   GET  /health        - Health check");
@@ -100,7 +118,14 @@ async function main() {
     console.log("   GET  /api/linear/states    - List workflow states");
     console.log("   GET  /api/linear/labels    - List labels");
     console.log("   GET  /api/linear/users     - List users");
+    console.log("");
+    console.log("🔌 WebSocket Real-time:");
+    console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
+    console.log("   Messages: agent_status, chat_message, notification, user_presence");
   });
+
+  // Export wsManager for use in other modules
+  (global as typeof global & { wsManager?: WebSocketManager }).wsManager = wsManager;
 }
 
 main().catch((error) => {
