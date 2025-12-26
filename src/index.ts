@@ -24,6 +24,7 @@ import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
 import { createEnforcementGate } from "./audit/enforcementGate.js";
 import { setupSwagger } from "./swagger/index.js";
+import { registerAllWebhookWorkers } from "./queue/workers/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,6 +41,9 @@ async function main() {
   // Initialize queue
   const queue = initQueue();
   console.log("✅ Queue initialized (mode:", queue.mode, ")");
+
+  // Register webhook event workers
+  registerAllWebhookWorkers(queue, db);
 
   // Initialize enforcement gate (HARD STOP enforcement)
   const gate = createEnforcementGate(db);
