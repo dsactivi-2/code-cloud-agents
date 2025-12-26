@@ -14,6 +14,7 @@ import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
 import { createGitHubRouter } from "./api/github.js";
 import { createLinearRouter } from "./api/linear.js";
+import { createAgentRouter } from "./api/agents.js";
 import { createGitHubWebhookRouter } from "./webhooks/github.js";
 import { createLinearWebhookRouter } from "./webhooks/linear.js";
 import { handleSlackEvents } from "./api/slack-events.js";
@@ -64,6 +65,7 @@ async function main() {
   app.use("/api/demo", createDemoRouter(db));
   app.use("/api/github", createGitHubRouter());
   app.use("/api/linear", createLinearRouter());
+  app.use("/api/agents", createAgentRouter());
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -148,6 +150,16 @@ async function main() {
     console.log("🔌 WebSocket Real-time:");
     console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
     console.log("   Messages: agent_status, chat_message, notification, user_presence");
+    console.log("");
+    console.log("🤖 Agent Control:");
+    console.log("   GET    /api/agents              - List all agents");
+    console.log("   GET    /api/agents/:id          - Get agent details");
+    console.log("   POST   /api/agents/:id/start    - Start agent");
+    console.log("   POST   /api/agents/:id/stop     - Stop agent");
+    console.log("   PATCH  /api/agents/:id/state    - Update agent state");
+    console.log("   GET    /api/agents/:id/logs     - Get agent logs");
+    console.log("   GET    /api/agents/:id/metrics  - Get agent metrics");
+    console.log("   GET    /api/agents/health/status - System health");
   });
 
   // Export wsManager for use in other modules
