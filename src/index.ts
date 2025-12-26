@@ -11,6 +11,7 @@ import { createTaskRouter } from "./api/tasks.js";
 import { createAuditRouter } from "./api/audit.js";
 import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
+import { createSwaggerRouter } from "./api/swagger.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
@@ -50,6 +51,7 @@ async function main() {
   app.use("/api/audit", createAuditRouter(db));
   app.use("/api/enforcement", createEnforcementRouter(gate));
   app.use("/api/demo", createDemoRouter(db));
+  app.use("/api/docs", createSwaggerRouter());
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -87,6 +89,11 @@ async function main() {
     console.log("");
     console.log("🤖 Mujo Interactive Bot:");
     console.log("   POST /api/slack/events     - Slack events webhook");
+    console.log("");
+    console.log("📚 API Documentation:");
+    console.log("   GET  /api/docs             - Swagger UI (Interactive API Docs)");
+    console.log("   GET  /api/docs/openapi.json - OpenAPI 3.0 JSON Spec");
+    console.log("   GET  /api/docs/openapi.yaml - OpenAPI 3.0 YAML Spec");
   });
 }
 
