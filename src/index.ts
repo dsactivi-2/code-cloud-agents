@@ -12,6 +12,7 @@ import { createAuditRouter } from "./api/audit.js";
 import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
 import { createLinearRouter } from "./api/linear.js";
+import { createSettingsRouter } from "./api/settings.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
@@ -52,6 +53,7 @@ async function main() {
   app.use("/api/enforcement", createEnforcementRouter(gate));
   app.use("/api/demo", createDemoRouter(db));
   app.use("/api/linear", createLinearRouter());
+  app.use("/api/settings", createSettingsRouter(db));
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -100,6 +102,18 @@ async function main() {
     console.log("   GET  /api/linear/states    - List workflow states");
     console.log("   GET  /api/linear/labels    - List labels");
     console.log("   GET  /api/linear/users     - List users");
+    console.log("");
+    console.log("⚙️  Settings Management:");
+    console.log("   GET    /api/settings/user/:userId           - Get user settings");
+    console.log("   PUT    /api/settings/user/:userId           - Update user settings");
+    console.log("   DELETE /api/settings/user/:userId           - Delete user settings");
+    console.log("   GET    /api/settings/preferences/:userId    - Get user preferences");
+    console.log("   PATCH  /api/settings/preferences/:userId    - Update preferences");
+    console.log("   GET    /api/settings/system                 - Get system settings (Admin)");
+    console.log("   GET    /api/settings/system/:key            - Get system setting");
+    console.log("   PUT    /api/settings/system                 - Update system settings (Admin)");
+    console.log("   GET    /api/settings/history/user/:userId   - Get user history");
+    console.log("   GET    /api/settings/history/system/:key    - Get system history");
   });
 }
 
