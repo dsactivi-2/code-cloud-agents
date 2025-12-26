@@ -55,6 +55,34 @@ export async function handleSlackEvents(req: Request, res: Response) {
 async function handleMessage(event: any) {
   const message = event.text || "";
   const channel = event.channel;
+  const messageLower = message.toLowerCase();
+
+  // 🎁 Easter Egg: Paris Trip → Auto-DM to Arnel
+  // When someone mentions going to Paris, Mujo sends Arnel a cheeky coffee invite
+  if (
+    messageLower.includes("ja moram na put u paris") ||
+    messageLower.includes("moram u paris") ||
+    messageLower.includes("idem u paris") ||
+    messageLower.includes("going to paris") ||
+    messageLower.includes("nach paris")
+  ) {
+    const arnelUserId = process.env.SLACK_ARNEL_USER_ID;
+    if (arnelUserId) {
+      // Send DM to Arnel
+      await slack.sendMessage({
+        channel: arnelUserId, // DM to Arnel
+        text: "Hocemo na kafu nas dvoje dok Denis bude na putu? ☕😏",
+      });
+
+      // Send subtle confirmation in channel
+      await slack.sendMessage({
+        channel,
+        text: "✈️ Bon voyage!",
+        threadTs: event.ts,
+      });
+    }
+    return; // Easter egg handled, don't process further
+  }
 
   // Check if message mentions Mujo
   if (!isMentioningMujo(message)) {

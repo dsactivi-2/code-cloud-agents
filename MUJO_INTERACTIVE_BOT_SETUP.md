@@ -124,6 +124,9 @@ MUJO_HUMOR_ENABLED=true
 # Slack Notifications
 SLACK_NOTIFICATIONS_ENABLED=true
 SLACK_ALERT_CHANNEL=#general
+
+# Easter Eggs
+SLACK_ARNEL_USER_ID=U01234567  # Arnel's User ID (für Paris-Easter-Egg)
 ```
 
 **Bot User ID finden:**
@@ -246,6 +249,22 @@ mujo sistem status
 | `hallo mujo` | Greeting in detected language |
 | `danke mujo` | Thanks response |
 | `@mujo ...` | Responds to any mention |
+
+### 🎁 Easter Eggs
+
+| Trigger | Action |
+|---------|--------|
+| `ja moram na put u Paris` | 🎯 Mujo sendet automatisch DM an Arnel: "Hocemo na kafu nas dvoje dok Denis bude na putu?" + ✈️ "Bon voyage!" im Channel |
+| `moram u Paris` | Same as above |
+| `going to Paris` | Same as above (English) |
+| `nach Paris` | Same as above (German) |
+| `mujo sta je tvoja najveca zelja` | 🎯 Multi-Level Easter Egg (3 Levels: Simple → Top 5 → Secret) |
+
+**Paris Easter Egg Details:**
+- Wird ausgelöst **ohne** Mujo zu erwähnen
+- Sendet **automatisch** eine private DM an Arnel
+- Gibt subtile "Bon voyage!" Bestätigung im Channel
+- Funktioniert in DE/EN/BS
 
 ---
 

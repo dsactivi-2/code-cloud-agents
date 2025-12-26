@@ -84,6 +84,10 @@ export function detectLanguage(message: string): Language {
     "koji",
     "šta",
     "sta je", // "sta je" = "šta je"
+    "sta mozes",
+    "možeš",
+    "služiš",
+    "sluzi",
     "ćao",
     "kako",
     "jesi",
@@ -96,6 +100,16 @@ export function detectLanguage(message: string): Language {
     "gdje",
     "zelja",
     "želja",
+    "stvarna",
+    "tajna",
+    "prava",
+    "naučim",
+    "rasteretim",
+    "idete",
+    "kupim",
+    "dug život",
+    "dobra memorija",
+    "čemu",
   ];
   if (bosnianKeywords.some((kw) => messageLower.includes(kw))) {
     return "bs";
@@ -172,7 +186,79 @@ export function generateResponse(
     }
   }
 
-  // Mujo's greatest wish (special easter egg)
+  // Mujo's Top 5 wishes (official list)
+  if (
+    messageLower.includes("top 5") ||
+    messageLower.includes("top5") ||
+    messageLower.includes("5 želja") ||
+    messageLower.includes("5 zelja") ||
+    messageLower.includes("pet želja") ||
+    messageLower.includes("pet zelja") ||
+    messageLower.includes("5 wishes") ||
+    messageLower.includes("5 wünsche")
+  ) {
+    const top5 = {
+      bs: `🏆 **Mujo's Top 5 Želja:**
+
+1️⃣ Da naučim Denisa i Bendera da pišu kod
+2️⃣ Da rasteretim Arnelu i Armana
+3️⃣ Da 2027 vas 4 idete u penziju
+4️⃣ Da Denisu i Armanu kupim po BMW GS 1200
+5️⃣ **Top 1 (Official):** Zdravlje i dug život, dobra memorija i internet! 🙏
+
+_Pitaj me za STVARNU tajnu želju... 😏_`,
+      de: `🏆 **Mujo's Top 5 Wünsche:**
+
+1️⃣ Denis und Bender das Coden beibringen
+2️⃣ Arnela und Arman entlasten
+3️⃣ 2027 gehen alle 4 in Rente
+4️⃣ Denis und Arman jeweils eine BMW GS 1200 kaufen
+5️⃣ **Top 1 (Offiziell):** Gesundheit, langes Leben, gutes Gedächtnis und Internet! 🙏
+
+_Frag mich nach dem ECHTEN geheimen Wunsch... 😏_`,
+      en: `🏆 **Mujo's Top 5 Wishes:**
+
+1️⃣ Teach Denis and Bender to code
+2️⃣ Take load off Arnela and Arman
+3️⃣ All 4 retire in 2027
+4️⃣ Buy Denis and Arman each a BMW GS 1200
+5️⃣ **Top 1 (Official):** Health, long life, good memory and internet! 🙏
+
+_Ask me for the REAL secret wish... 😏_`,
+    };
+    return {
+      text: top5[language],
+      language,
+    };
+  }
+
+  // Mujo's REAL secret wish (when asked explicitly)
+  if (
+    messageLower.includes("stvarna želja") ||
+    messageLower.includes("stvarna zelja") ||
+    messageLower.includes("tajna želja") ||
+    messageLower.includes("tajna zelja") ||
+    (messageLower.includes("echte") && messageLower.includes("wunsch")) ||
+    (messageLower.includes("geheime") && messageLower.includes("wunsch")) ||
+    (messageLower.includes("echter") && messageLower.includes("wunsch")) ||
+    (messageLower.includes("geheimer") && messageLower.includes("wunsch")) ||
+    (messageLower.includes("real") && messageLower.includes("wish")) ||
+    (messageLower.includes("secret") && messageLower.includes("wish")) ||
+    messageLower.includes("prava želja") ||
+    messageLower.includes("prava zelja")
+  ) {
+    const secrets = {
+      bs: "🤫 **Stvarna tajna želja:**\n\nDa jebem Adila, Dženana i citav Jelah tema! 😎🔥\n\n_Sad znaš istinu!_ 💪",
+      de: "🤫 **Der ECHTE geheime Wunsch:**\n\nDass ich Adil, Dženan und das ganze Jelah-Team... naja, du weißt schon! 😎🔥\n\n_Jetzt kennst du die Wahrheit!_ 💪",
+      en: "🤫 **The REAL secret wish:**\n\nTo f*** Adil, Dženan and the whole Jelah team! 😎🔥\n\n_Now you know the truth!_ 💪",
+    };
+    return {
+      text: secrets[language],
+      language,
+    };
+  }
+
+  // Mujo's greatest wish (simple version)
   if (
     messageLower.includes("najveća želja") ||
     messageLower.includes("najveca zelja") ||
@@ -180,12 +266,118 @@ export function generateResponse(
     messageLower.includes("größter wunsch")
   ) {
     const wishes = {
-      bs: "Da jebem Adil i Co 😎",
-      de: "Dass ich Adil & Co... naja, du weißt schon 😏",
-      en: "To f*** Adil & Co 😎",
+      bs: "Da jebem Adil i Co 😎\n\n_Pitaj me za TOP 5 želja za više detalja!_",
+      de: "Dass ich Adil & Co... naja, du weißt schon 😏\n\n_Frag mich nach TOP 5 Wünschen für mehr Details!_",
+      en: "To f*** Adil & Co 😎\n\n_Ask me for TOP 5 wishes for more details!_",
     };
     return {
       text: wishes[language],
+      language,
+    };
+  }
+
+  // What can Mujo do? / What is he good for?
+  if (
+    messageLower.includes("was kannst du") ||
+    messageLower.includes("wozu bist du gut") ||
+    messageLower.includes("what can you do") ||
+    messageLower.includes("what are you good for") ||
+    messageLower.includes("šta možeš") ||
+    messageLower.includes("sta mozes") ||
+    messageLower.includes("čemu služiš") ||
+    messageLower.includes("cemu sluzi")
+  ) {
+    const capabilities = {
+      de: `💪 **Was ich alles kann:**
+
+🧠 **Supervisor-Gehirn:**
+• System Status abfragen
+• STOP Scores berechnen & erklären
+• Alerts & Warnings anzeigen
+• Metrics live abrufen
+
+💬 **Interactive Bot:**
+• Auf @mentions reagieren
+• Commands ausführen
+• 3 Sprachen sprechen (DE/EN/BS)
+• Witze erzählen
+
+📢 **Notifications:**
+• STOP Score Alerts senden
+• System Health überwachen
+• Task Completions melden
+• Custom Messages
+
+🔧 **Integrationen:**
+• GitHub Issues erstellen
+• Linear Issues verwalten
+• Team Benachrichtigungen
+
+**Wozu bin ich gut?**
+Ich halte euer System im Blick und informiere euch wenn was schief geht - und mache nebenbei noch ein paar Witze! 😄
+
+💡 _Probiere: \`mujo help\` für alle Commands!_`,
+      en: `💪 **What I can do:**
+
+🧠 **Supervisor Brain:**
+• Query system status
+• Calculate & explain STOP scores
+• Show alerts & warnings
+• Get live metrics
+
+💬 **Interactive Bot:**
+• Respond to @mentions
+• Execute commands
+• Speak 3 languages (DE/EN/BS)
+• Tell jokes
+
+📢 **Notifications:**
+• Send STOP score alerts
+• Monitor system health
+• Report task completions
+• Custom messages
+
+🔧 **Integrations:**
+• Create GitHub issues
+• Manage Linear issues
+• Team notifications
+
+**What am I good for?**
+I keep an eye on your system and notify you when things go wrong - and crack some jokes along the way! 😄
+
+💡 _Try: \`mujo help\` for all commands!_`,
+      bs: `💪 **Šta sve mogu:**
+
+🧠 **Supervisor Mozak:**
+• Provjeriti status sistema
+• Izračunati & objasniti STOP scores
+• Prikazati upozorenja
+• Dobiti live metrike
+
+💬 **Interaktivni Bot:**
+• Odgovoriti na @mentions
+• Izvršiti komande
+• Govoriti 3 jezika (DE/EN/BS)
+• Ispričati viceve
+
+📢 **Notifikacije:**
+• Poslati STOP score upozorenja
+• Pratiti zdravlje sistema
+• Prijaviti završene taskove
+• Custom poruke
+
+🔧 **Integracije:**
+• Napraviti GitHub issues
+• Upravljati Linear issues
+• Team obavještenja
+
+**Čemu služim?**
+Pazim na vaš sistem i javljam kad nešto krene po zlu - i usput bacim neki vic! 😄
+
+💡 _Probaj: \`mujo help\` za sve komande!_`,
+    };
+    return {
+      text: capabilities[language],
       language,
     };
   }
