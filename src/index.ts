@@ -11,6 +11,7 @@ import { createTaskRouter } from "./api/tasks.js";
 import { createAuditRouter } from "./api/audit.js";
 import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
+import { createGitHubRouter } from "./api/github.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
@@ -50,6 +51,7 @@ async function main() {
   app.use("/api/audit", createAuditRouter(db));
   app.use("/api/enforcement", createEnforcementRouter(gate));
   app.use("/api/demo", createDemoRouter(db));
+  app.use("/api/github", createGitHubRouter());
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -87,6 +89,17 @@ async function main() {
     console.log("");
     console.log("🤖 Mujo Interactive Bot:");
     console.log("   POST /api/slack/events     - Slack events webhook");
+    console.log("");
+    console.log("🔗 GitHub Integration:");
+    console.log("   GET  /api/github/status    - GitHub connection status");
+    console.log("   GET  /api/github/repos     - List repositories");
+    console.log("   GET  /api/github/repos/:owner/:repo  - Get repository");
+    console.log("   GET  /api/github/issues    - List issues");
+    console.log("   POST /api/github/issues    - Create issue");
+    console.log("   GET  /api/github/pulls     - List pull requests");
+    console.log("   POST /api/github/pulls     - Create pull request");
+    console.log("   GET  /api/github/comments  - List comments");
+    console.log("   POST /api/github/comments  - Create comment");
   });
 }
 
