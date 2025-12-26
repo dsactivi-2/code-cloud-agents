@@ -12,6 +12,8 @@ import { createAuditRouter } from "./api/audit.js";
 import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
 import { createLinearRouter } from "./api/linear.js";
+import { createGitHubWebhookRouter } from "./webhooks/github.js";
+import { createLinearWebhookRouter } from "./webhooks/linear.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
@@ -39,6 +41,12 @@ async function main() {
 
   // Create Express app
   const app = express();
+
+  // Webhook routes need raw body for signature verification
+  app.use("/api/webhooks/github", express.text({ type: "application/json" }), createGitHubWebhookRouter(db, queue));
+  app.use("/api/webhooks/linear", express.text({ type: "application/json" }), createLinearWebhookRouter(db, queue));
+
+  // All other routes use JSON parsing
   app.use(express.json());
 
   // Serve static dashboard
@@ -100,6 +108,11 @@ async function main() {
     console.log("   GET  /api/linear/states    - List workflow states");
     console.log("   GET  /api/linear/labels    - List labels");
     console.log("   GET  /api/linear/users     - List users");
+    console.log("");
+    console.log("🪝 Webhook Handlers:");
+    console.log("   POST /api/webhooks/github  - GitHub webhook events");
+    console.log("   POST /api/webhooks/linear  - Linear webhook events");
+    console.log("   GET  /api/webhooks/linear/test - Test Linear webhook");
   });
 }
 
