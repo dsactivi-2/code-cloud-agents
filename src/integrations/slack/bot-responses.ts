@@ -83,6 +83,7 @@ export function detectLanguage(message: string): Language {
   const bosnianKeywords = [
     "koji",
     "šta",
+    "sta je", // "sta je" = "šta je"
     "ćao",
     "kako",
     "jesi",
@@ -93,6 +94,8 @@ export function detectLanguage(message: string): Language {
     "jest",
     "kome",
     "gdje",
+    "zelja",
+    "želja",
   ];
   if (bosnianKeywords.some((kw) => messageLower.includes(kw))) {
     return "bs";
@@ -167,6 +170,24 @@ export function generateResponse(
         language,
       };
     }
+  }
+
+  // Mujo's greatest wish (special easter egg)
+  if (
+    messageLower.includes("najveća želja") ||
+    messageLower.includes("najveca zelja") ||
+    messageLower.includes("greatest wish") ||
+    messageLower.includes("größter wunsch")
+  ) {
+    const wishes = {
+      bs: "Da jebem Adil i Co 😎",
+      de: "Dass ich Adil & Co... naja, du weißt schon 😏",
+      en: "To f*** Adil & Co 😎",
+    };
+    return {
+      text: wishes[language],
+      language,
+    };
   }
 
   // Who is Mujo?
