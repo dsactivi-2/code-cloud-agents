@@ -5,6 +5,9 @@
  * Do not use in production without explicit approval.
  */
 
+export { createSlackClient, type SlackClient, type SlackMessage } from "./slack/client.js";
+export { createGitHubClient, type GitHubClient } from "./github/client.js";
+export { createLinearClient, type LinearClient } from "./linear/client.js";
 export { createWhatsAppClient, type WhatsAppClient, type WhatsAppMessage } from "./whatsapp/client.js";
 export { createVoiceClient, type VoiceClient, type VoiceCall } from "./voice/client.js";
 export { createGoogleClient, type GoogleClient } from "./google/client.js";
@@ -16,6 +19,18 @@ export { createPineconeClient, type PineconeClient, type PineconeVector } from "
  */
 export async function getAllIntegrationStatus(): Promise<Record<string, { enabled: boolean; connected: boolean }>> {
   return {
+    slack: {
+      enabled: process.env.SLACK_ENABLED === "true",
+      connected: false,
+    },
+    github: {
+      enabled: process.env.GITHUB_ENABLED === "true",
+      connected: false,
+    },
+    linear: {
+      enabled: process.env.LINEAR_ENABLED === "true",
+      connected: false,
+    },
     whatsapp: {
       enabled: process.env.WHATSAPP_ENABLED === "true",
       connected: false,
