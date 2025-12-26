@@ -6,6 +6,7 @@
  */
 
 export { createGitHubClient, type GitHubClient, type GitHubIssue } from "./github/client.js";
+export { createSlackClient, type SlackClient, type SlackMessage } from "./slack/client.js";
 export { createWhatsAppClient, type WhatsAppClient, type WhatsAppMessage } from "./whatsapp/client.js";
 export { createVoiceClient, type VoiceClient, type VoiceCall } from "./voice/client.js";
 export { createGoogleClient, type GoogleClient } from "./google/client.js";
@@ -19,6 +20,10 @@ export async function getAllIntegrationStatus(): Promise<Record<string, { enable
   return {
     github: {
       enabled: process.env.GITHUB_ENABLED === "true",
+      connected: false,
+    },
+    slack: {
+      enabled: process.env.SLACK_ENABLED === "true",
       connected: false,
     },
     whatsapp: {
