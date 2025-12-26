@@ -6,13 +6,18 @@
 import express from "express";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { createServer } from "http";
 import { createHealthRouter } from "./api/health.js";
 import { createTaskRouter } from "./api/tasks.js";
 import { createAuditRouter } from "./api/audit.js";
 import { createEnforcementRouter } from "./api/enforcement.js";
 import { createDemoRouter } from "./api/demo.js";
+import { createGitHubRouter } from "./api/github.js";
 import { createLinearRouter } from "./api/linear.js";
+import { createGitHubWebhookRouter } from "./webhooks/github.js";
+import { createLinearWebhookRouter } from "./webhooks/linear.js";
 import { handleSlackEvents } from "./api/slack-events.js";
+import { WebSocketManager } from "./websocket/server.js";
 import { initDatabase } from "./db/database.js";
 import { initQueue } from "./queue/queue.js";
 import { createEnforcementGate } from "./audit/enforcementGate.js";
@@ -39,6 +44,12 @@ async function main() {
 
   // Create Express app
   const app = express();
+
+  // Webhook routes need raw body for signature verification
+  app.use("/api/webhooks/github", express.text({ type: "application/json" }), createGitHubWebhookRouter(db, queue));
+  app.use("/api/webhooks/linear", express.text({ type: "application/json" }), createLinearWebhookRouter(db, queue));
+
+  // All other routes use JSON parsing
   app.use(express.json());
 
   // Serve static dashboard
@@ -51,6 +62,7 @@ async function main() {
   app.use("/api/audit", createAuditRouter(db));
   app.use("/api/enforcement", createEnforcementRouter(gate));
   app.use("/api/demo", createDemoRouter(db));
+  app.use("/api/github", createGitHubRouter());
   app.use("/api/linear", createLinearRouter());
 
   // Slack Events (Mujo Interactive Bot)
@@ -67,10 +79,26 @@ async function main() {
     });
   });
 
+  // Create HTTP server
+  const server = createServer(app);
+
+  // Initialize WebSocket server
+  const wsManager = new WebSocketManager(server);
+
+  // Example: Broadcast agent status every 10 seconds
+  setInterval(() => {
+    wsManager.broadcastAgentStatus({
+      agentName: "ENGINEERING_LEAD_SUPERVISOR",
+      state: "idle",
+      currentTask: undefined,
+    });
+  }, 10000);
+
   // Start server
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
     console.log("📋 Dashboard: http://localhost:" + PORT);
+    console.log("🔌 WebSocket: ws://localhost:" + PORT + "/ws");
     console.log("📋 API Endpoints:");
     console.log("   GET  /api           - API info");
     console.log("   GET  /health        - Health check");
@@ -90,6 +118,17 @@ async function main() {
     console.log("🤖 Mujo Interactive Bot:");
     console.log("   POST /api/slack/events     - Slack events webhook");
     console.log("");
+    console.log("🔗 GitHub Integration:");
+    console.log("   GET  /api/github/status    - GitHub connection status");
+    console.log("   GET  /api/github/repos     - List repositories");
+    console.log("   GET  /api/github/repos/:owner/:repo  - Get repository");
+    console.log("   GET  /api/github/issues    - List issues");
+    console.log("   POST /api/github/issues    - Create issue");
+    console.log("   GET  /api/github/pulls     - List pull requests");
+    console.log("   POST /api/github/pulls     - Create pull request");
+    console.log("   GET  /api/github/comments  - List comments");
+    console.log("   POST /api/github/comments  - Create comment");
+    console.log("");
     console.log("📐 Linear Integration:");
     console.log("   GET  /api/linear/status    - Linear connection status");
     console.log("   GET  /api/linear/teams     - List teams");
@@ -100,7 +139,19 @@ async function main() {
     console.log("   GET  /api/linear/states    - List workflow states");
     console.log("   GET  /api/linear/labels    - List labels");
     console.log("   GET  /api/linear/users     - List users");
+    console.log("");
+    console.log("🪝 Webhook Handlers:");
+    console.log("   POST /api/webhooks/github  - GitHub webhook events");
+    console.log("   POST /api/webhooks/linear  - Linear webhook events");
+    console.log("   GET  /api/webhooks/linear/test - Test Linear webhook");
+    console.log("");
+    console.log("🔌 WebSocket Real-time:");
+    console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
+    console.log("   Messages: agent_status, chat_message, notification, user_presence");
   });
+
+  // Export wsManager for use in other modules
+  (global as typeof global & { wsManager?: WebSocketManager }).wsManager = wsManager;
 }
 
 main().catch((error) => {
