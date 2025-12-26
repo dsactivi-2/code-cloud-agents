@@ -17,6 +17,7 @@ import { createLinearRouter } from "./api/linear.js";
 import { createGitHubWebhookRouter } from "./webhooks/github.js";
 import { createLinearWebhookRouter } from "./webhooks/linear.js";
 import { createSettingsRouter } from "./api/settings.js";
+import { createMemoryRouter } from "./api/memory.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { WebSocketManager } from "./websocket/server.js";
 import { initDatabase } from "./db/database.js";
@@ -66,6 +67,7 @@ async function main() {
   app.use("/api/github", createGitHubRouter());
   app.use("/api/linear", createLinearRouter());
   app.use("/api/settings", createSettingsRouter(db));
+  app.use("/api/memory", createMemoryRouter(db));
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -158,6 +160,16 @@ async function main() {
     console.log("   PUT    /api/settings/system                 - Update system settings (Admin)");
     console.log("   GET    /api/settings/history/user/:userId   - Get user history");
     console.log("   GET    /api/settings/history/system/:key    - Get system history");
+    console.log("");
+    console.log("🧠 Memory System:");
+    console.log("   GET    /api/memory/chats/:userId             - List chats");
+    console.log("   POST   /api/memory/chats                     - Create chat");
+    console.log("   GET    /api/memory/chats/:chatId/details     - Get chat details");
+    console.log("   POST   /api/memory/chats/:chatId/messages    - Add message");
+    console.log("   GET    /api/memory/chats/:chatId/recent      - Get recent messages");
+    console.log("   POST   /api/memory/search                    - Full-text search");
+    console.log("   POST   /api/memory/semantic/search           - Semantic search (embeddings)");
+    console.log("   GET    /api/memory/trending/:userId          - Trending topics");
     console.log("");
     console.log("🔌 WebSocket Real-time:");
     console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
