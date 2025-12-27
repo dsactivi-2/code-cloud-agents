@@ -51,11 +51,11 @@ async function main() {
   const queue = initQueue();
   console.log("✅ Queue initialized (mode:", queue.mode, ")");
 
-  // Initialize email transporter
-  await initEmailTransporter();
-
   // Register webhook event workers
   registerAllWebhookWorkers(queue, db);
+
+  // Initialize email transporter
+  await initEmailTransporter();
 
   // Initialize enforcement gate (HARD STOP enforcement)
   const gate = createEnforcementGate(db);
