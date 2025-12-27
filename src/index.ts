@@ -23,6 +23,9 @@ import { createGitHubWebhookRouter } from "./webhooks/github.js";
 import { createLinearWebhookRouter } from "./webhooks/linear.js";
 import { createSettingsRouter } from "./api/settings.js";
 import { createMemoryRouter } from "./api/memory.js";
+import { createWebhookRouter } from "./api/webhooks.js";
+import { createBillingRouter } from "./api/billing.js";
+import { createModulesRouter } from "./api/modules.js";
 import { handleSlackEvents } from "./api/slack-events.js";
 import { WebSocketManager } from "./websocket/server.js";
 import { initDatabase } from "./db/database.js";
@@ -87,6 +90,9 @@ async function main() {
   app.use("/api/agents", createAgentControlRouter());
   app.use("/api/settings", createSettingsRouter(db));
   app.use("/api/memory", createMemoryRouter(db));
+  app.use("/api/webhooks", createWebhookRouter());
+  app.use("/api/billing", createBillingRouter());
+  app.use("/api/modules", createModulesRouter());
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -112,7 +118,7 @@ async function main() {
   const wsManager = new WebSocketManager(server);
 
   // Example: Broadcast agent status every 10 seconds
-  setInterval(() => {
+  const statusInterval = setInterval(() => {
     wsManager.broadcastAgentStatus({
       agentName: "ENGINEERING_LEAD_SUPERVISOR",
       state: "idle",
@@ -200,6 +206,32 @@ async function main() {
 
   // Export wsManager for use in other modules
   (global as typeof global & { wsManager?: WebSocketManager }).wsManager = wsManager;
+
+  // Graceful shutdown handler
+  const shutdown = async (signal: string) => {
+    console.log(`\n🛑 ${signal} received, shutting down gracefully...`);
+
+    // Clear intervals
+    clearInterval(statusInterval);
+
+    // Stop accepting new connections
+    server.close(() => {
+      console.log("✅ HTTP server closed");
+    });
+
+    // Close WebSocket connections
+    wsManager.close();
+
+    // Close database connection
+    db.close();
+
+    console.log("👋 Shutdown complete");
+    process.exit(0);
+  };
+
+  // Register shutdown handlers
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 main().catch((error) => {
