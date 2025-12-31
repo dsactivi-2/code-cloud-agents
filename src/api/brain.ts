@@ -143,7 +143,7 @@ export function createBrainRouter(db: Database): Router {
           url: parsed.data.url,
           metadata: parsed.data.metadata,
         },
-        parsed.data.content
+        parsed.data.content,
       );
 
       // Generate embeddings in background
@@ -370,7 +370,12 @@ export function createBrainRouter(db: Database): Router {
       const sourceType = req.query.sourceType as string;
       const status = req.query.status as string;
 
-      const docs = brainManager.listDocs(userId, { limit, offset, sourceType, status });
+      const docs = brainManager.listDocs(userId, {
+        limit,
+        offset,
+        sourceType,
+        status,
+      });
 
       res.json({
         success: true,
