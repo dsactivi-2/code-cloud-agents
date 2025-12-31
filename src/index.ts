@@ -41,6 +41,7 @@ import { handleSlackEvents } from "./api/slack-events.js";
 import { ChatStorage } from "./chat/storage.js";
 import { ChatManager } from "./chat/manager.js";
 import { createAgentTasksRouter } from "./api/agent-tasks.js";
+import { createOpsRouter } from "./api/ops.js";
 import { initializeLiveUpdates } from "./agents/live-updates.js";
 import { agentWorker } from "./agents/agent-worker.js";
 import { WebSocketManager } from "./websocket/server.js";
@@ -167,6 +168,7 @@ async function main() {
   app.use("/api/chat", createChatRouter(chatManager));
   app.use("/api/brain", createBrainRouter(db));
   app.use("/api/agent-tasks", createAgentTasksRouter());
+  app.use("/api/ops", createOpsRouter(db));
 
   // Slack Events (Mujo Interactive Bot)
   app.post("/api/slack/events", handleSlackEvents);
@@ -298,6 +300,11 @@ async function main() {
     console.log("   POST  /api/brain/search        - Advanced search");
     console.log("   GET   /api/brain/docs          - List documents");
     console.log("   GET   /api/brain/stats         - Statistics");
+    console.log("");
+    console.log("📊 Ops Dashboard:");
+    console.log("   GET   /api/ops/events          - Unified event stream");
+    console.log("   GET   /api/ops/tasks/history   - Task history with details");
+    console.log("   GET   /api/ops/stats           - Aggregated statistics (Admin)");
     console.log("");
     console.log("🔌 WebSocket Real-time:");
     console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
