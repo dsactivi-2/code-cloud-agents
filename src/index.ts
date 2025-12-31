@@ -8,7 +8,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Initialize Sentry BEFORE any other imports
-import { initSentry, sentryRequestHandler, sentryTracingHandler, sentryErrorHandler, flushSentry, log, metrics } from "./monitoring/sentry.js";
+import {
+  initSentry,
+  sentryRequestHandler,
+  sentryTracingHandler,
+  sentryErrorHandler,
+  flushSentry,
+  log,
+  metrics,
+} from "./monitoring/sentry.js";
 initSentry();
 
 import express from "express";
@@ -61,7 +69,10 @@ const PORT = process.env.PORT ?? 3000;
 
 async function main() {
   console.log("🚀 Starting Code Cloud Agents...");
-  log.info("Server starting", { version: "0.1.0", nodeVersion: process.version });
+  log.info("Server starting", {
+    version: "0.1.0",
+    nodeVersion: process.version,
+  });
 
   // Initialize database
   const db = initDatabase();
@@ -112,10 +123,20 @@ async function main() {
     const start = Date.now();
     res.on("finish", () => {
       const duration = Date.now() - start;
-      metrics.increment("api.requests.total", 1, { method: req.method, path: req.path });
-      metrics.distribution("api.response_time", duration, { method: req.method, path: req.path });
+      metrics.increment("api.requests.total", 1, {
+        method: req.method,
+        path: req.path,
+      });
+      metrics.distribution("api.response_time", duration, {
+        method: req.method,
+        path: req.path,
+      });
       if (res.statusCode >= 400) {
-        metrics.increment("api.errors", 1, { method: req.method, path: req.path, status: String(res.statusCode) });
+        metrics.increment("api.errors", 1, {
+          method: req.method,
+          path: req.path,
+          status: String(res.statusCode),
+        });
       }
     });
     next();
@@ -125,23 +146,38 @@ async function main() {
   app.use(cors());
 
   // Webhook routes need raw body for signature verification
-  app.use("/api/webhooks/github", express.text({ type: "application/json" }), createGitHubWebhookRouter(db, queue));
-  app.use("/api/webhooks/linear", express.text({ type: "application/json" }), createLinearWebhookRouter(db, queue));
+  app.use(
+    "/api/webhooks/github",
+    express.text({ type: "application/json" }),
+    createGitHubWebhookRouter(db, queue),
+  );
+  app.use(
+    "/api/webhooks/linear",
+    express.text({ type: "application/json" }),
+    createLinearWebhookRouter(db, queue),
+  );
 
   // All other routes use JSON parsing with error handling
   app.use(express.json());
 
   // JSON parse error handler
-  app.use((err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (err instanceof SyntaxError && 'body' in err) {
-      console.error('❌ JSON Parse Error:', err.message);
-      return res.status(400).json({
-        error: 'Invalid JSON',
-        message: err.message
-      });
-    }
-    next(err);
-  });
+  app.use(
+    (
+      err: any,
+      _req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      if (err instanceof SyntaxError && "body" in err) {
+        console.error("❌ JSON Parse Error:", err.message);
+        return res.status(400).json({
+          error: "Invalid JSON",
+          message: err.message,
+        });
+      }
+      next(err);
+    },
+  );
 
   // Serve static dashboard
   const publicPath = join(__dirname, "..", "public");
@@ -178,7 +214,9 @@ async function main() {
 
   // Sentry test endpoint (for verifying integration)
   app.get("/api/sentry/test", () => {
-    throw new Error("Sentry Test Error - This is a test to verify error tracking works");
+    throw new Error(
+      "Sentry Test Error - This is a test to verify error tracking works",
+    );
   });
 
   // Sentry error handler (must be before other error handlers)
@@ -221,7 +259,10 @@ async function main() {
   // Start server
   server.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
-    log.info("Server started", { port: Number(PORT), environment: process.env.NODE_ENV || "development" });
+    log.info("Server started", {
+      port: Number(PORT),
+      environment: process.env.NODE_ENV || "development",
+    });
     console.log("📋 Dashboard: http://localhost:" + PORT);
     console.log("🔌 WebSocket: ws://localhost:" + PORT + "/ws");
     console.log("📋 API Endpoints:");
@@ -271,26 +312,60 @@ async function main() {
     console.log("   GET  /api/webhooks/linear/test - Test Linear webhook");
     console.log("");
     console.log("⚙️  Settings Management:");
-    console.log("   GET    /api/settings/user/:userId           - Get user settings");
-    console.log("   PUT    /api/settings/user/:userId           - Update user settings");
-    console.log("   DELETE /api/settings/user/:userId           - Delete user settings");
-    console.log("   GET    /api/settings/preferences/:userId    - Get user preferences");
-    console.log("   PATCH  /api/settings/preferences/:userId    - Update preferences");
-    console.log("   GET    /api/settings/system                 - Get system settings (Admin)");
-    console.log("   GET    /api/settings/system/:key            - Get system setting");
-    console.log("   PUT    /api/settings/system                 - Update system settings (Admin)");
-    console.log("   GET    /api/settings/history/user/:userId   - Get user history");
-    console.log("   GET    /api/settings/history/system/:key    - Get system history");
+    console.log(
+      "   GET    /api/settings/user/:userId           - Get user settings",
+    );
+    console.log(
+      "   PUT    /api/settings/user/:userId           - Update user settings",
+    );
+    console.log(
+      "   DELETE /api/settings/user/:userId           - Delete user settings",
+    );
+    console.log(
+      "   GET    /api/settings/preferences/:userId    - Get user preferences",
+    );
+    console.log(
+      "   PATCH  /api/settings/preferences/:userId    - Update preferences",
+    );
+    console.log(
+      "   GET    /api/settings/system                 - Get system settings (Admin)",
+    );
+    console.log(
+      "   GET    /api/settings/system/:key            - Get system setting",
+    );
+    console.log(
+      "   PUT    /api/settings/system                 - Update system settings (Admin)",
+    );
+    console.log(
+      "   GET    /api/settings/history/user/:userId   - Get user history",
+    );
+    console.log(
+      "   GET    /api/settings/history/system/:key    - Get system history",
+    );
     console.log("");
     console.log("🧠 Memory System:");
     console.log("   GET    /api/memory/chats/:userId             - List chats");
-    console.log("   POST   /api/memory/chats                     - Create chat");
-    console.log("   GET    /api/memory/chats/:chatId/details     - Get chat details");
-    console.log("   POST   /api/memory/chats/:chatId/messages    - Add message");
-    console.log("   GET    /api/memory/chats/:chatId/recent      - Get recent messages");
-    console.log("   POST   /api/memory/search                    - Full-text search");
-    console.log("   POST   /api/memory/semantic/search           - Semantic search (embeddings)");
-    console.log("   GET    /api/memory/trending/:userId          - Trending topics");
+    console.log(
+      "   POST   /api/memory/chats                     - Create chat",
+    );
+    console.log(
+      "   GET    /api/memory/chats/:chatId/details     - Get chat details",
+    );
+    console.log(
+      "   POST   /api/memory/chats/:chatId/messages    - Add message",
+    );
+    console.log(
+      "   GET    /api/memory/chats/:chatId/recent      - Get recent messages",
+    );
+    console.log(
+      "   POST   /api/memory/search                    - Full-text search",
+    );
+    console.log(
+      "   POST   /api/memory/semantic/search           - Semantic search (embeddings)",
+    );
+    console.log(
+      "   GET    /api/memory/trending/:userId          - Trending topics",
+    );
     console.log("");
     console.log("🧠 Brain (Knowledge Base):");
     console.log("   POST  /api/brain/ingest/text   - Ingest text");
@@ -303,16 +378,23 @@ async function main() {
     console.log("");
     console.log("📊 Ops Dashboard:");
     console.log("   GET   /api/ops/events          - Unified event stream");
-    console.log("   GET   /api/ops/tasks/history   - Task history with details");
-    console.log("   GET   /api/ops/stats           - Aggregated statistics (Admin)");
+    console.log(
+      "   GET   /api/ops/tasks/history   - Task history with details",
+    );
+    console.log(
+      "   GET   /api/ops/stats           - Aggregated statistics (Admin)",
+    );
     console.log("");
     console.log("🔌 WebSocket Real-time:");
     console.log("   WS   ws://localhost:" + PORT + "/ws?token=YOUR_TOKEN");
-    console.log("   Messages: agent_status, chat_message, notification, user_presence");
+    console.log(
+      "   Messages: agent_status, chat_message, notification, user_presence",
+    );
   });
 
   // Export wsManager for use in other modules
-  (global as typeof global & { wsManager?: WebSocketManager }).wsManager = wsManager;
+  (global as typeof global & { wsManager?: WebSocketManager }).wsManager =
+    wsManager;
 
   // Graceful shutdown handler
   const shutdown = async (signal: string) => {

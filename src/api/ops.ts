@@ -14,7 +14,13 @@ import { requireAuth, requireAdmin } from "../auth/middleware.js";
  */
 export interface OpsEvent {
   id: string;
-  type: "task_created" | "task_started" | "task_completed" | "task_stopped" | "audit_decision" | "agent_activity";
+  type:
+    | "task_created"
+    | "task_started"
+    | "task_completed"
+    | "task_stopped"
+    | "audit_decision"
+    | "agent_activity";
   timestamp: string;
   agentId?: string;
   taskId?: string;
@@ -66,7 +72,9 @@ export function createOpsRouter(db: Database): Router {
       const eventType = req.query.type as string | undefined;
 
       // Default: last 24 hours
-      const defaultSince = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const defaultSince = new Date(
+        Date.now() - 24 * 60 * 60 * 1000,
+      ).toISOString();
       const since = (req.query.since as string) || defaultSince;
 
       const events: OpsEvent[] = [];
@@ -97,7 +105,10 @@ export function createOpsRouter(db: Database): Router {
 
         // Task completed/stopped event (if updated)
         if (task.updated_at && task.updated_at >= since) {
-          if (task.status === "completed" && (!eventType || eventType === "task_completed")) {
+          if (
+            task.status === "completed" &&
+            (!eventType || eventType === "task_completed")
+          ) {
             events.push({
               id: `task-completed-${task.id}`,
               type: "task_completed",
@@ -108,7 +119,10 @@ export function createOpsRouter(db: Database): Router {
               status: task.status,
               stopScore: task.stop_score,
             });
-          } else if (task.status === "stopped" && (!eventType || eventType === "task_stopped")) {
+          } else if (
+            task.status === "stopped" &&
+            (!eventType || eventType === "task_stopped")
+          ) {
             events.push({
               id: `task-stopped-${task.id}`,
               type: "task_stopped",
@@ -152,7 +166,10 @@ export function createOpsRouter(db: Database): Router {
       }
 
       // Sort by timestamp (newest first)
-      events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      events.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      );
 
       // Apply limit
       const limitedEvents = events.slice(0, limit);
@@ -292,13 +309,17 @@ export function createOpsRouter(db: Database): Router {
       const stopScoreStats = db.getStopScoreStats();
 
       // Agent activity (group by assignee)
-      const agentActivity: Record<string, { total: number; completed: number; stopped: number }> = {};
+      const agentActivity: Record<
+        string,
+        { total: number; completed: number; stopped: number }
+      > = {};
       for (const task of allTasks) {
         if (!agentActivity[task.assignee]) {
           agentActivity[task.assignee] = { total: 0, completed: 0, stopped: 0 };
         }
         agentActivity[task.assignee].total++;
-        if (task.status === "completed") agentActivity[task.assignee].completed++;
+        if (task.status === "completed")
+          agentActivity[task.assignee].completed++;
         if (task.status === "stopped") agentActivity[task.assignee].stopped++;
       }
 
