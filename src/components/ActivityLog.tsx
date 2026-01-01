@@ -25,10 +25,15 @@ export function ActivityLog({ logs }: ActivityLogProps) {
   return (
     <Card className="col-span-full" data-testid="cloudagents.activitylog.card">
       <CardHeader>
-        <CardTitle data-testid="cloudagents.activitylog.title">Activity Log</CardTitle>
+        <CardTitle data-testid="cloudagents.activitylog.title">
+          Activity Log
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-80" data-testid="cloudagents.activitylog.scrollarea">
+        <ScrollArea
+          className="h-80"
+          data-testid="cloudagents.activitylog.scrollarea"
+        >
           <div className="space-y-3" data-testid="cloudagents.activitylog.list">
             {logs.map((log) => (
               <div

@@ -26,16 +26,23 @@ export function StatsCard({
   trend,
   icon,
 }: StatsCardProps) {
-  const testIdBase = `cloudagents.statscard.${title.toLowerCase().replace(/\s+/g, '')}`;
+  const testIdBase = `cloudagents.statscard.${title.toLowerCase().replace(/\s+/g, "")}`;
 
   return (
     <Card data-testid={testIdBase}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium" data-testid={`${testIdBase}.title`}>{title}</CardTitle>
+        <CardTitle
+          className="text-sm font-medium"
+          data-testid={`${testIdBase}.title`}
+        >
+          {title}
+        </CardTitle>
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold" data-testid={`${testIdBase}.value`}>{value}</div>
+        <div className="text-2xl font-bold" data-testid={`${testIdBase}.value`}>
+          {value}
+        </div>
         <CardDescription className="flex items-center gap-2 mt-1">
           {description}
           {trend && (

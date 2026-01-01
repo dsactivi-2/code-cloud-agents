@@ -86,7 +86,10 @@ export function DemoDashboard({ userId }: Props) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]" data-testid="cloudagents.demodashboard.loading">
+      <div
+        className="flex items-center justify-center min-h-[400px]"
+        data-testid="cloudagents.demodashboard.loading"
+      >
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
@@ -94,9 +97,14 @@ export function DemoDashboard({ userId }: Props) {
 
   if (error || !user) {
     return (
-      <Alert variant="destructive" data-testid="cloudagents.demodashboard.error">
+      <Alert
+        variant="destructive"
+        data-testid="cloudagents.demodashboard.error"
+      >
         <XCircle className="h-4 w-4" />
-        <AlertDescription data-testid="cloudagents.demodashboard.error.message">{error || "User not found"}</AlertDescription>
+        <AlertDescription data-testid="cloudagents.demodashboard.error.message">
+          {error || "User not found"}
+        </AlertDescription>
       </Alert>
     );
   }
@@ -108,10 +116,21 @@ export function DemoDashboard({ userId }: Props) {
   return (
     <div className="space-y-6" data-testid="cloudagents.demodashboard">
       {/* Header */}
-      <div className="flex items-center justify-between" data-testid="cloudagents.demodashboard.header">
+      <div
+        className="flex items-center justify-between"
+        data-testid="cloudagents.demodashboard.header"
+      >
         <div>
-          <h1 className="text-3xl font-bold" data-testid="cloudagents.demodashboard.title">Demo Dashboard</h1>
-          <p className="text-gray-500 dark:text-gray-400" data-testid="cloudagents.demodashboard.welcome">
+          <h1
+            className="text-3xl font-bold"
+            data-testid="cloudagents.demodashboard.title"
+          >
+            Demo Dashboard
+          </h1>
+          <p
+            className="text-gray-500 dark:text-gray-400"
+            data-testid="cloudagents.demodashboard.welcome"
+          >
             Welcome back, {user.email}
           </p>
         </div>
@@ -155,7 +174,10 @@ export function DemoDashboard({ userId }: Props) {
       )}
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-3" data-testid="cloudagents.demodashboard.statsgrid">
+      <div
+        className="grid gap-4 md:grid-cols-3"
+        data-testid="cloudagents.demodashboard.statsgrid"
+      >
         {/* Credits Card */}
         <Card data-testid="cloudagents.demodashboard.card.credits">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -165,7 +187,10 @@ export function DemoDashboard({ userId }: Props) {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="cloudagents.demodashboard.card.credits.value">
+            <div
+              className="text-2xl font-bold"
+              data-testid="cloudagents.demodashboard.card.credits.value"
+            >
               ${user.credits.remainingUSD.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -197,7 +222,12 @@ export function DemoDashboard({ userId }: Props) {
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="cloudagents.demodashboard.card.messages.value">{user.messages.remaining}</div>
+            <div
+              className="text-2xl font-bold"
+              data-testid="cloudagents.demodashboard.card.messages.value"
+            >
+              {user.messages.remaining}
+            </div>
             <p className="text-xs text-muted-foreground">
               of {user.messages.limit} total
             </p>
@@ -227,7 +257,12 @@ export function DemoDashboard({ userId }: Props) {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="cloudagents.demodashboard.card.days.value">{user.daysRemaining}</div>
+            <div
+              className="text-2xl font-bold"
+              data-testid="cloudagents.demodashboard.card.days.value"
+            >
+              {user.daysRemaining}
+            </div>
             <p className="text-xs text-muted-foreground">
               Expires {new Date(user.expiresAt).toLocaleDateString()}
             </p>
