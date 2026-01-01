@@ -12,16 +12,24 @@ import {
 } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Play, Pause, Settings, Trash2, Activity, Sparkles, Globe } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Settings,
+  Trash2,
+  Activity,
+  Sparkles,
+  Globe,
+} from "lucide-react";
 
 /**
  * Spoken language labels for display
  */
 const SPOKEN_LANGUAGE_LABELS: Record<string, string> = {
-  de: 'Deutsch',
-  en: 'English',
-  bs: 'Bosanski',
-  sr: 'Српски',
+  de: "Deutsch",
+  en: "English",
+  bs: "Bosanski",
+  sr: "Српски",
 };
 
 interface AgentCardProps {
@@ -30,14 +38,14 @@ interface AgentCardProps {
   description: string;
   status: "active" | "paused" | "stopped";
   language: string;
-  spokenLanguage?: 'de' | 'en' | 'bs' | 'sr';      // NEU aus PR#4
-  agentType?: 'standard' | 'influencer';            // NEU aus PR#4
-  contentAutonomy?: boolean;                         // NEU aus PR#4
+  spokenLanguage?: "de" | "en" | "bs" | "sr"; // NEU aus PR#4
+  agentType?: "standard" | "influencer"; // NEU aus PR#4
+  contentAutonomy?: boolean; // NEU aus PR#4
   lastRun: string;
   executionCount: number;
   onStart: (id: string) => void;
   onPause: (id: string) => void;
-  onConfigure: (id: string) => void;                // BEHALTEN aus code-cloud-agents
+  onConfigure: (id: string) => void; // BEHALTEN aus code-cloud-agents
   onDelete: (id: string) => void;
 }
 
@@ -63,11 +71,11 @@ export function AgentCard({
     stopped: "bg-gray-500",
   };
 
-  const isInfluencer = agentType === 'influencer';
+  const isInfluencer = agentType === "influencer";
 
   return (
     <Card
-      className={`hover:shadow-lg transition-shadow ${isInfluencer ? 'border-purple-200 bg-gradient-to-br from-purple-50/50 to-transparent' : ''}`}
+      className={`hover:shadow-lg transition-shadow ${isInfluencer ? "border-purple-200 bg-gradient-to-br from-purple-50/50 to-transparent" : ""}`}
       data-testid={`cloudagents.agent.${id}.card`}
     >
       <CardHeader>
@@ -78,7 +86,9 @@ export function AgentCard({
                 className="flex items-center gap-2"
                 data-testid={`cloudagents.agent.${id}.title`}
               >
-                {isInfluencer && <Sparkles className="w-4 h-4 text-purple-500" />}
+                {isInfluencer && (
+                  <Sparkles className="w-4 h-4 text-purple-500" />
+                )}
                 {name}
               </CardTitle>
               <div
@@ -127,7 +137,9 @@ export function AgentCard({
               </span>
               <Badge
                 variant="outline"
-                className={spokenLanguage === 'sr' ? 'border-blue-300 bg-blue-50' : ''}
+                className={
+                  spokenLanguage === "sr" ? "border-blue-300 bg-blue-50" : ""
+                }
                 data-testid={`cloudagents.agent.${id}.spokenLanguage`}
               >
                 {SPOKEN_LANGUAGE_LABELS[spokenLanguage] || spokenLanguage}
@@ -146,7 +158,9 @@ export function AgentCard({
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Letzte Ausführung:</span>
-            <span data-testid={`cloudagents.agent.${id}.lastRun`}>{lastRun}</span>
+            <span data-testid={`cloudagents.agent.${id}.lastRun`}>
+              {lastRun}
+            </span>
           </div>
           <div className="flex gap-2 mt-4">
             {status === "active" ? (

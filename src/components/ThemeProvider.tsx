@@ -3,14 +3,20 @@
  * Provides dark/light theme switching functionality
  */
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
 interface ThemeContextValue {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: 'light' | 'dark';
+  resolvedTheme: "light" | "dark";
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -18,9 +24,11 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 /**
  * Gets the system's preferred color scheme
  */
-function getSystemTheme(): 'light' | 'dark' {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+function getSystemTheme(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 interface ThemeProviderProps {
@@ -35,16 +43,16 @@ interface ThemeProviderProps {
  */
 export function ThemeProvider({
   children,
-  defaultTheme = 'system',
-  storageKey = 'cca-theme',
+  defaultTheme = "system",
+  storageKey = "cca-theme",
 }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return defaultTheme;
+    if (typeof window === "undefined") return defaultTheme;
     return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
   });
 
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
-    if (theme === 'system') return getSystemTheme();
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() => {
+    if (theme === "system") return getSystemTheme();
     return theme;
   });
 
@@ -52,10 +60,10 @@ export function ThemeProvider({
     const root = window.document.documentElement;
 
     // Remove existing theme classes
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
     // Determine which theme to apply
-    const resolved = theme === 'system' ? getSystemTheme() : theme;
+    const resolved = theme === "system" ? getSystemTheme() : theme;
     setResolvedTheme(resolved);
 
     // Apply theme class
@@ -64,18 +72,18 @@ export function ThemeProvider({
 
   // Listen for system theme changes
   useEffect(() => {
-    if (theme !== 'system') return;
+    if (theme !== "system") return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       const systemTheme = getSystemTheme();
       setResolvedTheme(systemTheme);
-      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.remove("light", "dark");
       document.documentElement.classList.add(systemTheme);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
@@ -85,9 +93,7 @@ export function ThemeProvider({
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
-      <div data-testid="cloudagents.theme.provider">
-        {children}
-      </div>
+      <div data-testid="cloudagents.theme.provider">{children}</div>
     </ThemeContext.Provider>
   );
 }
@@ -98,7 +104,7 @@ export function ThemeProvider({
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 }

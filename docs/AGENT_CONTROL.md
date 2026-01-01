@@ -1,4 +1,5 @@
 ++ b/docs/AGENT_CONTROL.md
+
 # 🤖 Agent Control API
 
 ## Overview
@@ -43,6 +44,7 @@ http://localhost:3000/api/agents
 Returns a list of all agents in the system.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -85,9 +87,11 @@ Returns a list of all agents in the system.
 Get detailed information about a specific agent.
 
 **Parameters:**
+
 - `agentId` (path) - Agent ID (e.g., `agent_cloud_assistant`)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -107,6 +111,7 @@ Get detailed information about a specific agent.
 ```
 
 **Error Response (404):**
+
 ```json
 {
   "success": false,
@@ -123,9 +128,11 @@ Get detailed information about a specific agent.
 Start a stopped agent.
 
 **Parameters:**
+
 - `agentId` (path) - Agent ID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -140,6 +147,7 @@ Start a stopped agent.
 ```
 
 **Error Response (400):**
+
 ```json
 {
   "success": false,
@@ -156,6 +164,7 @@ Start a stopped agent.
 Stop a running agent.
 
 **Request Body:**
+
 ```json
 {
   "reason": "Maintenance required"
@@ -163,6 +172,7 @@ Stop a running agent.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -185,6 +195,7 @@ Stop a running agent.
 Manually update agent state.
 
 **Request Body:**
+
 ```json
 {
   "state": "idle",
@@ -193,11 +204,13 @@ Manually update agent state.
 ```
 
 **Valid States:**
+
 - `idle` - Agent is ready for work
 - `working` - Agent is processing a task
 - `stopped` - Agent is stopped
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -218,15 +231,18 @@ Manually update agent state.
 Retrieve agent activity logs.
 
 **Query Parameters:**
+
 - `limit` (optional) - Number of logs to return (default: 100, max: 1000)
 - `level` (optional) - Filter by log level (`info`, `warn`, `error`, `debug`)
 
 **Example:**
+
 ```
 GET /api/agents/agent_cloud_assistant/logs?limit=50&level=error
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -261,6 +277,7 @@ GET /api/agents/agent_cloud_assistant/logs?limit=50&level=error
 Get performance metrics for an agent.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -285,6 +302,7 @@ Get performance metrics for an agent.
 ```
 
 **Metric Descriptions:**
+
 - `uptime` - Agent uptime in seconds
 - `totalTasks` - Total tasks processed (success + failed)
 - `successfulTasks` - Number of completed tasks
@@ -308,6 +326,7 @@ Get performance metrics for an agent.
 Get overall system health status.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -340,6 +359,7 @@ Get overall system health status.
 ```
 
 **Health Status:**
+
 - `healthy` - All agents running normally
 - `degraded` - Some agents stopped but no errors
 - `unhealthy` - One or more agents in error state
@@ -348,12 +368,12 @@ Get overall system health status.
 
 ## Agent States
 
-| State | Description |
-|-------|-------------|
-| `idle` | Agent is ready and waiting for tasks |
-| `working` | Agent is actively processing a task |
-| `stopped` | Agent has been manually stopped |
-| `error` | Agent encountered an error |
+| State     | Description                          |
+| --------- | ------------------------------------ |
+| `idle`    | Agent is ready and waiting for tasks |
+| `working` | Agent is actively processing a task  |
+| `stopped` | Agent has been manually stopped      |
+| `error`   | Agent encountered an error           |
 
 ---
 
@@ -368,6 +388,7 @@ Get overall system health status.
 ```
 
 **Valid Transitions:**
+
 - `idle` → `working` (task assigned)
 - `working` → `idle` (task completed)
 - `working` → `error` (task failed)
@@ -382,14 +403,14 @@ Agent state changes are automatically broadcast via WebSocket:
 
 ```javascript
 // Connect to WebSocket
-const ws = new WebSocket('ws://localhost:3000/ws?token=YOUR_TOKEN');
+const ws = new WebSocket("ws://localhost:3000/ws?token=YOUR_TOKEN");
 
 // Listen for agent status updates
 ws.onmessage = (event) => {
   const message = JSON.parse(event.data);
 
-  if (message.type === 'agent_status') {
-    console.log('Agent update:', message.data);
+  if (message.type === "agent_status") {
+    console.log("Agent update:", message.data);
     // {
     //   agentName: 'CLOUD_ASSISTANT',
     //   state: 'working',
@@ -407,21 +428,25 @@ ws.onmessage = (event) => {
 ### cURL Examples
 
 **List all agents:**
+
 ```bash
 curl http://localhost:3000/api/agents
 ```
 
 **Get agent details:**
+
 ```bash
 curl http://localhost:3000/api/agents/agent_cloud_assistant
 ```
 
 **Start agent:**
+
 ```bash
 curl -X POST http://localhost:3000/api/agents/agent_cloud_assistant/start
 ```
 
 **Stop agent:**
+
 ```bash
 curl -X POST http://localhost:3000/api/agents/agent_cloud_assistant/stop \
   -H "Content-Type: application/json" \
@@ -429,6 +454,7 @@ curl -X POST http://localhost:3000/api/agents/agent_cloud_assistant/stop \
 ```
 
 **Update agent state:**
+
 ```bash
 curl -X PATCH http://localhost:3000/api/agents/agent_cloud_assistant/state \
   -H "Content-Type: application/json" \
@@ -436,16 +462,19 @@ curl -X PATCH http://localhost:3000/api/agents/agent_cloud_assistant/state \
 ```
 
 **Get agent logs:**
+
 ```bash
 curl "http://localhost:3000/api/agents/agent_cloud_assistant/logs?limit=50&level=error"
 ```
 
 **Get agent metrics:**
+
 ```bash
 curl http://localhost:3000/api/agents/agent_cloud_assistant/metrics
 ```
 
 **Get system health:**
+
 ```bash
 curl http://localhost:3000/api/agents/health/status
 ```
@@ -456,7 +485,7 @@ curl http://localhost:3000/api/agents/health/status
 
 ```typescript
 class AgentControlClient {
-  private baseUrl = 'http://localhost:3000/api/agents';
+  private baseUrl = "http://localhost:3000/api/agents";
 
   async listAgents() {
     const response = await fetch(this.baseUrl);
@@ -470,32 +499,36 @@ class AgentControlClient {
 
   async startAgent(agentId: string) {
     const response = await fetch(`${this.baseUrl}/${agentId}/start`, {
-      method: 'POST'
+      method: "POST",
     });
     return await response.json();
   }
 
   async stopAgent(agentId: string, reason?: string) {
     const response = await fetch(`${this.baseUrl}/${agentId}/stop`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
     });
     return await response.json();
   }
 
-  async updateState(agentId: string, state: 'idle' | 'working' | 'stopped', reason?: string) {
+  async updateState(
+    agentId: string,
+    state: "idle" | "working" | "stopped",
+    reason?: string,
+  ) {
     const response = await fetch(`${this.baseUrl}/${agentId}/state`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ state, reason })
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state, reason }),
     });
     return await response.json();
   }
 
   async getLogs(agentId: string, limit = 100, level?: string) {
     const params = new URLSearchParams({ limit: limit.toString() });
-    if (level) params.append('level', level);
+    if (level) params.append("level", level);
 
     const response = await fetch(`${this.baseUrl}/${agentId}/logs?${params}`);
     return await response.json();
@@ -517,17 +550,17 @@ const client = new AgentControlClient();
 
 // List all agents
 const agents = await client.listAgents();
-console.log('Agents:', agents);
+console.log("Agents:", agents);
 
 // Stop an agent for maintenance
-await client.stopAgent('agent_cloud_assistant', 'System maintenance');
+await client.stopAgent("agent_cloud_assistant", "System maintenance");
 
 // Start agent again
-await client.startAgent('agent_cloud_assistant');
+await client.startAgent("agent_cloud_assistant");
 
 // Monitor agent health
 const health = await client.getSystemHealth();
-console.log('System health:', health.health);
+console.log("System health:", health.health);
 ```
 
 ---
@@ -544,6 +577,7 @@ All endpoints return errors in the following format:
 ```
 
 **HTTP Status Codes:**
+
 - `200` - Success
 - `400` - Bad request (invalid input)
 - `404` - Agent not found
@@ -584,7 +618,7 @@ curl "http://localhost:3000/api/agents/agent_cloud_assistant/logs?limit=1000"
 
 🤖 Generated with Claude Code
 ++ b/docs/WEBSOCKET.md
+
 # 🔌 WebSocket Real-time Communication
 
 ## Overview
-
