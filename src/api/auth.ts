@@ -11,7 +11,11 @@ import {
   revokeToken,
   refreshAccessToken,
 } from "../auth/jwt.js";
-import { verifyUserPassword, getUserById, changeUserPassword } from "../db/users.js";
+import {
+  verifyUserPassword,
+  getUserById,
+  changeUserPassword,
+} from "../db/users.js";
 import { loginRateLimiter } from "../auth/rate-limiter.js";
 import { requireAdmin, type AuthenticatedRequest } from "../auth/middleware.js";
 
