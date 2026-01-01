@@ -17,7 +17,7 @@ interface BrainProxyOptions {
 /**
  * Creates Brain API Proxy router
  */
-export function createBrainProxyRouter(options: BrainProxyOptions = {}): Router {
+export function createBrainProxyRouter(_options: BrainProxyOptions = {}): Router {
   const router = Router();
   router.use(requireAuth);
 
