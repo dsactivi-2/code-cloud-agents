@@ -10,7 +10,8 @@
  * - x-project-id: Project ID
  */
 
-const CORE_BRAIN_ORIGIN = process.env.CORE_BRAIN_ORIGIN || "http://49.13.158.176:5001";
+const CORE_BRAIN_ORIGIN =
+  process.env.CORE_BRAIN_ORIGIN || "http://49.13.158.176:5001";
 const DEFAULT_ORG_ID = "activi-dev";
 const DEFAULT_PROJECT_ID = "cloud-agents";
 
@@ -59,7 +60,9 @@ function buildHeaders(userId: string): Record<string, string> {
 /**
  * Search the central brain for relevant memories
  */
-export async function coreBrainSearch(params: CoreBrainSearchParams): Promise<CoreBrainSearchResult[]> {
+export async function coreBrainSearch(
+  params: CoreBrainSearchParams,
+): Promise<CoreBrainSearchResult[]> {
   try {
     const response = await fetch(`${CORE_BRAIN_ORIGIN}/api/memory/search`, {
       method: "POST",
@@ -86,7 +89,9 @@ export async function coreBrainSearch(params: CoreBrainSearchParams): Promise<Co
 /**
  * Store new memory in central brain (append-only, no overwrites)
  */
-export async function coreBrainStore(params: CoreBrainStoreParams): Promise<{ success: boolean; id?: string }> {
+export async function coreBrainStore(
+  params: CoreBrainStoreParams,
+): Promise<{ success: boolean; id?: string }> {
   try {
     const response = await fetch(`${CORE_BRAIN_ORIGIN}/api/memory/store`, {
       method: "POST",
@@ -114,7 +119,10 @@ export async function coreBrainStore(params: CoreBrainStoreParams): Promise<{ su
 /**
  * Get recent memories from central brain
  */
-export async function coreBrainRecent(userId: string, limit: number = 10): Promise<CoreBrainMemory[]> {
+export async function coreBrainRecent(
+  userId: string,
+  limit: number = 10,
+): Promise<CoreBrainMemory[]> {
   try {
     const response = await fetch(`${CORE_BRAIN_ORIGIN}/api/memory/recent`, {
       method: "POST",
@@ -138,7 +146,9 @@ export async function coreBrainRecent(userId: string, limit: number = 10): Promi
 /**
  * Build context string from core brain results for prompt injection
  */
-export function buildCoreBrainContext(results: CoreBrainSearchResult[]): string {
+export function buildCoreBrainContext(
+  results: CoreBrainSearchResult[],
+): string {
   if (results.length === 0) return "";
 
   const lines = results.map((r, i) => `[${i + 1}] ${r.content}`);
