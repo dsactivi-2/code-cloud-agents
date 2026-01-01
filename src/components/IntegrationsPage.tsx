@@ -26,7 +26,13 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Switch } from "./ui/switch";
@@ -102,7 +108,9 @@ export function IntegrationsPage() {
     setLoading(true);
     try {
       // Load GitHub data
-      const ghStatus = await githubApi.status().catch(() => ({ connected: false }));
+      const ghStatus = await githubApi
+        .status()
+        .catch(() => ({ connected: false }));
       setGithubConnected(ghStatus.connected);
       if (ghStatus.connected) {
         const [reposRes, issuesRes] = await Promise.all([
@@ -114,7 +122,9 @@ export function IntegrationsPage() {
       }
 
       // Load Linear data
-      const linearStatus = await linearApi.status().catch(() => ({ connected: false }));
+      const linearStatus = await linearApi
+        .status()
+        .catch(() => ({ connected: false }));
       setLinearConnected(linearStatus.connected);
       if (linearStatus.connected) {
         const [teamsRes, issuesRes] = await Promise.all([
@@ -126,7 +136,9 @@ export function IntegrationsPage() {
       }
 
       // Load webhooks
-      const webhooksRes = await webhooksApi.list().catch(() => ({ webhooks: [] }));
+      const webhooksRes = await webhooksApi
+        .list()
+        .catch(() => ({ webhooks: [] }));
       setWebhooks(webhooksRes.webhooks);
     } catch (error) {
       console.error("Failed to load integrations:", error);
@@ -147,7 +159,9 @@ export function IntegrationsPage() {
       setWebhookForm({ url: "", events: [], secret: "" });
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -157,7 +171,9 @@ export function IntegrationsPage() {
       toast.success("Webhook gelöscht");
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -166,7 +182,9 @@ export function IntegrationsPage() {
       await webhooksApi.test(id);
       toast.success("Test-Webhook gesendet");
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -190,7 +208,9 @@ export function IntegrationsPage() {
       setIssueForm({ title: "", body: "", repo: "", teamId: "" });
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -219,7 +239,9 @@ export function IntegrationsPage() {
           </p>
         </div>
         <Button variant="outline" onClick={loadData} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
           Aktualisieren
         </Button>
       </div>
@@ -272,14 +294,17 @@ export function IntegrationsPage() {
                 <div className="text-center py-8">
                   <Github className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-muted-foreground mb-4">
-                    GitHub ist nicht verbunden. Konfigurieren Sie GITHUB_TOKEN in den Umgebungsvariablen.
+                    GitHub ist nicht verbunden. Konfigurieren Sie GITHUB_TOKEN
+                    in den Umgebungsvariablen.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {/* Repos */}
                   <div>
-                    <h3 className="font-semibold mb-3">Repositories ({githubRepos.length})</h3>
+                    <h3 className="font-semibold mb-3">
+                      Repositories ({githubRepos.length})
+                    </h3>
                     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                       {githubRepos.slice(0, 6).map((repo) => (
                         <Card key={repo.id} className="p-4">
@@ -307,7 +332,9 @@ export function IntegrationsPage() {
                   {/* Issues */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-semibold">Offene Issues ({githubIssues.length})</h3>
+                      <h3 className="font-semibold">
+                        Offene Issues ({githubIssues.length})
+                      </h3>
                       <Button
                         size="sm"
                         onClick={() => {
@@ -331,15 +358,25 @@ export function IntegrationsPage() {
                       <TableBody>
                         {githubIssues.slice(0, 5).map((issue) => (
                           <TableRow key={issue.id}>
-                            <TableCell className="font-mono">#{issue.number}</TableCell>
+                            <TableCell className="font-mono">
+                              #{issue.number}
+                            </TableCell>
                             <TableCell>{issue.title}</TableCell>
                             <TableCell>
-                              <Badge variant={issue.state === "open" ? "default" : "secondary"}>
+                              <Badge
+                                variant={
+                                  issue.state === "open"
+                                    ? "default"
+                                    : "secondary"
+                                }
+                              >
                                 {issue.state}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
-                              {new Date(issue.createdAt).toLocaleDateString("de-DE")}
+                              {new Date(issue.createdAt).toLocaleDateString(
+                                "de-DE",
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -362,9 +399,7 @@ export function IntegrationsPage() {
                     <LinearIcon className="w-5 h-5" />
                     Linear Integration
                   </CardTitle>
-                  <CardDescription>
-                    Teams und Issues verwalten
-                  </CardDescription>
+                  <CardDescription>Teams und Issues verwalten</CardDescription>
                 </div>
                 <Badge variant={linearConnected ? "default" : "secondary"}>
                   {linearConnected ? (
@@ -384,14 +419,17 @@ export function IntegrationsPage() {
                 <div className="text-center py-8">
                   <LinearIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-muted-foreground mb-4">
-                    Linear ist nicht verbunden. Konfigurieren Sie LINEAR_API_KEY in den Umgebungsvariablen.
+                    Linear ist nicht verbunden. Konfigurieren Sie LINEAR_API_KEY
+                    in den Umgebungsvariablen.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {/* Teams */}
                   <div>
-                    <h3 className="font-semibold mb-3">Teams ({linearTeams.length})</h3>
+                    <h3 className="font-semibold mb-3">
+                      Teams ({linearTeams.length})
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {linearTeams.map((team) => (
                         <Badge key={team.id} variant="outline">
@@ -404,7 +442,9 @@ export function IntegrationsPage() {
                   {/* Issues */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-semibold">Issues ({linearIssues.length})</h3>
+                      <h3 className="font-semibold">
+                        Issues ({linearIssues.length})
+                      </h3>
                       <Button
                         size="sm"
                         onClick={() => {
@@ -437,8 +477,8 @@ export function IntegrationsPage() {
                                   issue.priority <= 1
                                     ? "destructive"
                                     : issue.priority <= 2
-                                    ? "default"
-                                    : "secondary"
+                                      ? "default"
+                                      : "secondary"
                                 }
                               >
                                 P{issue.priority}
@@ -482,7 +522,10 @@ export function IntegrationsPage() {
                   <p className="text-muted-foreground mb-4">
                     Keine Webhooks konfiguriert
                   </p>
-                  <Button variant="outline" onClick={() => setCreateWebhookOpen(true)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setCreateWebhookOpen(true)}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Ersten Webhook erstellen
                   </Button>
@@ -507,7 +550,11 @@ export function IntegrationsPage() {
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {webhook.events.slice(0, 2).map((event) => (
-                              <Badge key={event} variant="outline" className="text-xs">
+                              <Badge
+                                key={event}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {event}
                               </Badge>
                             ))}
@@ -522,7 +569,9 @@ export function IntegrationsPage() {
                           <Switch checked={webhook.active} disabled />
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {new Date(webhook.createdAt).toLocaleDateString("de-DE")}
+                          {new Date(webhook.createdAt).toLocaleDateString(
+                            "de-DE",
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
@@ -561,7 +610,8 @@ export function IntegrationsPage() {
           <DialogHeader>
             <DialogTitle>Neuen Webhook erstellen</DialogTitle>
             <DialogDescription>
-              Konfigurieren Sie einen Webhook um bei Events benachrichtigt zu werden.
+              Konfigurieren Sie einen Webhook um bei Events benachrichtigt zu
+              werden.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -571,7 +621,9 @@ export function IntegrationsPage() {
                 id="webhook-url"
                 type="url"
                 value={webhookForm.url}
-                onChange={(e) => setWebhookForm({ ...webhookForm, url: e.target.value })}
+                onChange={(e) =>
+                  setWebhookForm({ ...webhookForm, url: e.target.value })
+                }
                 placeholder="https://example.com/webhook"
               />
             </div>
@@ -581,7 +633,9 @@ export function IntegrationsPage() {
                 {availableEvents.map((event) => (
                   <Badge
                     key={event}
-                    variant={webhookForm.events.includes(event) ? "default" : "outline"}
+                    variant={
+                      webhookForm.events.includes(event) ? "default" : "outline"
+                    }
                     className="cursor-pointer"
                     onClick={() => {
                       const events = webhookForm.events.includes(event)
@@ -601,13 +655,18 @@ export function IntegrationsPage() {
                 id="webhook-secret"
                 type="password"
                 value={webhookForm.secret}
-                onChange={(e) => setWebhookForm({ ...webhookForm, secret: e.target.value })}
+                onChange={(e) =>
+                  setWebhookForm({ ...webhookForm, secret: e.target.value })
+                }
                 placeholder="Webhook-Signatur-Secret"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateWebhookOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setCreateWebhookOpen(false)}
+            >
               Abbrechen
             </Button>
             <Button
@@ -625,7 +684,9 @@ export function IntegrationsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {issueType === "github" ? "GitHub Issue erstellen" : "Linear Issue erstellen"}
+              {issueType === "github"
+                ? "GitHub Issue erstellen"
+                : "Linear Issue erstellen"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -634,7 +695,9 @@ export function IntegrationsPage() {
               <Input
                 id="issue-title"
                 value={issueForm.title}
-                onChange={(e) => setIssueForm({ ...issueForm, title: e.target.value })}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, title: e.target.value })
+                }
                 placeholder="Issue Titel"
               />
             </div>
@@ -643,7 +706,9 @@ export function IntegrationsPage() {
               <Textarea
                 id="issue-body"
                 value={issueForm.body}
-                onChange={(e) => setIssueForm({ ...issueForm, body: e.target.value })}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, body: e.target.value })
+                }
                 placeholder="Issue Beschreibung..."
                 rows={4}
               />
@@ -655,9 +720,13 @@ export function IntegrationsPage() {
                   {githubRepos.slice(0, 6).map((repo) => (
                     <Badge
                       key={repo.id}
-                      variant={issueForm.repo === repo.fullName ? "default" : "outline"}
+                      variant={
+                        issueForm.repo === repo.fullName ? "default" : "outline"
+                      }
                       className="cursor-pointer"
-                      onClick={() => setIssueForm({ ...issueForm, repo: repo.fullName })}
+                      onClick={() =>
+                        setIssueForm({ ...issueForm, repo: repo.fullName })
+                      }
                     >
                       {repo.name}
                     </Badge>
@@ -672,9 +741,13 @@ export function IntegrationsPage() {
                   {linearTeams.map((team) => (
                     <Badge
                       key={team.id}
-                      variant={issueForm.teamId === team.id ? "default" : "outline"}
+                      variant={
+                        issueForm.teamId === team.id ? "default" : "outline"
+                      }
                       className="cursor-pointer"
-                      onClick={() => setIssueForm({ ...issueForm, teamId: team.id })}
+                      onClick={() =>
+                        setIssueForm({ ...issueForm, teamId: team.id })
+                      }
                     >
                       {team.name}
                     </Badge>

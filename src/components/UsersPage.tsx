@@ -119,7 +119,9 @@ export function UsersPage() {
       setFormData({ email: "", password: "", displayName: "", role: "user" });
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -137,7 +139,9 @@ export function UsersPage() {
       setSelectedUser(null);
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -151,7 +155,9 @@ export function UsersPage() {
       setSelectedUser(null);
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -165,7 +171,9 @@ export function UsersPage() {
       setSelectedUser(null);
       setNewPassword("");
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -173,10 +181,14 @@ export function UsersPage() {
   async function handleToggleActive(user: User) {
     try {
       await usersApi.update(user.id, { isActive: !user.isActive });
-      toast.success(user.isActive ? "Benutzer deaktiviert" : "Benutzer aktiviert");
+      toast.success(
+        user.isActive ? "Benutzer deaktiviert" : "Benutzer aktiviert",
+      );
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -196,7 +208,9 @@ export function UsersPage() {
   const filteredUsers = users.filter(
     (user) =>
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (user.displayName?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      (user.displayName?.toLowerCase() || "").includes(
+        searchQuery.toLowerCase(),
+      ),
   );
 
   // Role badge color
@@ -224,7 +238,10 @@ export function UsersPage() {
             Benutzer erstellen, bearbeiten und verwalten
           </p>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)} data-testid="users_button_create">
+        <Button
+          onClick={() => setCreateDialogOpen(true)}
+          data-testid="users_button_create"
+        >
           <UserPlus className="w-4 h-4 mr-2" />
           Neuer Benutzer
         </Button>
@@ -250,7 +267,9 @@ export function UsersPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.active}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -260,7 +279,9 @@ export function UsersPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{stats.admins}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {stats.admins}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -280,7 +301,9 @@ export function UsersPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{stats.demos}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.demos}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -327,7 +350,10 @@ export function UsersPage() {
                 </TableRow>
               ) : filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={7}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     Keine Benutzer gefunden
                   </TableCell>
                 </TableRow>
@@ -360,7 +386,9 @@ export function UsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEditDialog(user)}>
+                          <DropdownMenuItem
+                            onClick={() => openEditDialog(user)}
+                          >
                             <Pencil className="w-4 h-4 mr-2" />
                             Bearbeiten
                           </DropdownMenuItem>
@@ -410,7 +438,9 @@ export function UsersPage() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="user@example.com"
                 data-testid="users_input_email"
               />
@@ -421,7 +451,9 @@ export function UsersPage() {
                 id="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 placeholder="Mindestens 8 Zeichen"
                 data-testid="users_input_password"
               />
@@ -431,7 +463,9 @@ export function UsersPage() {
               <Input
                 id="displayName"
                 value={formData.displayName}
-                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, displayName: e.target.value })
+                }
                 placeholder="Max Mustermann"
                 data-testid="users_input_displayName"
               />
@@ -456,7 +490,10 @@ export function UsersPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setCreateDialogOpen(false)}
+            >
               Abbrechen
             </Button>
             <Button
@@ -486,7 +523,9 @@ export function UsersPage() {
                 id="edit-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -494,7 +533,9 @@ export function UsersPage() {
               <Input
                 id="edit-displayName"
                 value={formData.displayName}
-                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, displayName: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -535,12 +576,15 @@ export function UsersPage() {
             </DialogTitle>
             <DialogDescription>
               Sind Sie sicher, dass Sie den Benutzer{" "}
-              <strong>{selectedUser?.email}</strong> löschen möchten? Diese Aktion
-              kann nicht rückgängig gemacht werden.
+              <strong>{selectedUser?.email}</strong> löschen möchten? Diese
+              Aktion kann nicht rückgängig gemacht werden.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
               Abbrechen
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
@@ -551,7 +595,10 @@ export function UsersPage() {
       </Dialog>
 
       {/* Reset Password Dialog */}
-      <Dialog open={resetPasswordDialogOpen} onOpenChange={setResetPasswordDialogOpen}>
+      <Dialog
+        open={resetPasswordDialogOpen}
+        onOpenChange={setResetPasswordDialogOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -559,7 +606,8 @@ export function UsersPage() {
               Passwort zurücksetzen
             </DialogTitle>
             <DialogDescription>
-              Setzen Sie ein neues Passwort für <strong>{selectedUser?.email}</strong>.
+              Setzen Sie ein neues Passwort für{" "}
+              <strong>{selectedUser?.email}</strong>.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -576,7 +624,10 @@ export function UsersPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setResetPasswordDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setResetPasswordDialogOpen(false)}
+            >
               Abbrechen
             </Button>
             <Button

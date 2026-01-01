@@ -21,7 +21,7 @@ function getAuthHeaders(): HeadersInit {
  */
 async function fetchApi<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
@@ -32,7 +32,9 @@ async function fetchApi<T>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    const error = await response
+      .json()
+      .catch(() => ({ error: "Unknown error" }));
     throw new Error(error.error || error.message || `HTTP ${response.status}`);
   }
 
@@ -69,9 +71,11 @@ export const authApi = {
     }),
 
   verify: () =>
-    fetchApi<{ success: boolean; valid: boolean; user: { userId: string; role: string; email: string } }>(
-      "/api/auth/verify"
-    ),
+    fetchApi<{
+      success: boolean;
+      valid: boolean;
+      user: { userId: string; role: string; email: string };
+    }>("/api/auth/verify"),
 
   me: () =>
     fetchApi<{
@@ -88,31 +92,52 @@ export const authApi = {
     }>("/api/auth/me"),
 
   resetPassword: (userId: string, newPassword: string) =>
-    fetchApi<{ success: boolean; message: string }>("/api/auth/reset-password", {
-      method: "POST",
-      body: JSON.stringify({ userId, newPassword }),
-    }),
+    fetchApi<{ success: boolean; message: string }>(
+      "/api/auth/reset-password",
+      {
+        method: "POST",
+        body: JSON.stringify({ userId, newPassword }),
+      },
+    ),
 };
 
 // ============================================================================
 // USERS API
 // ============================================================================
 export const usersApi = {
-  list: (params?: { role?: string; isActive?: boolean; limit?: number; offset?: number }) =>
+  list: (params?: {
+    role?: string;
+    isActive?: boolean;
+    limit?: number;
+    offset?: number;
+  }) =>
     fetchApi<{ success: boolean; users: User[]; total: number }>(
-      `/api/users${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/users${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
   getById: (id: string) =>
     fetchApi<{ success: boolean; user: User }>(`/api/users/${id}`),
 
-  create: (data: { email: string; password: string; role: string; displayName?: string }) =>
+  create: (data: {
+    email: string;
+    password: string;
+    role: string;
+    displayName?: string;
+  }) =>
     fetchApi<{ success: boolean; user: User }>("/api/users", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  update: (id: string, data: Partial<{ email: string; role: string; displayName: string; isActive: boolean }>) =>
+  update: (
+    id: string,
+    data: Partial<{
+      email: string;
+      role: string;
+      displayName: string;
+      isActive: boolean;
+    }>,
+  ) =>
     fetchApi<{ success: boolean; user: User }>(`/api/users/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -122,33 +147,42 @@ export const usersApi = {
     fetchApi<{ success: boolean }>(`/api/users/${id}`, { method: "DELETE" }),
 
   stats: () =>
-    fetchApi<{ total: number; active: number; admins: number; users: number; demos: number }>("/api/users/stats"),
+    fetchApi<{
+      total: number;
+      active: number;
+      admins: number;
+      users: number;
+      demos: number;
+    }>("/api/users/stats"),
 };
 
 // ============================================================================
 // AGENTS API
 // ============================================================================
 export const agentsApi = {
-  list: () =>
-    fetchApi<{ agents: Agent[] }>("/api/agents"),
+  list: () => fetchApi<{ agents: Agent[] }>("/api/agents"),
 
-  getById: (id: string) =>
-    fetchApi<{ agent: Agent }>(`/api/agents/${id}`),
+  getById: (id: string) => fetchApi<{ agent: Agent }>(`/api/agents/${id}`),
 
   start: (id: string) =>
-    fetchApi<{ success: boolean }>(`/api/agents/${id}/start`, { method: "POST" }),
+    fetchApi<{ success: boolean }>(`/api/agents/${id}/start`, {
+      method: "POST",
+    }),
 
   stop: (id: string) =>
-    fetchApi<{ success: boolean }>(`/api/agents/${id}/stop`, { method: "POST" }),
+    fetchApi<{ success: boolean }>(`/api/agents/${id}/stop`, {
+      method: "POST",
+    }),
 
   restart: (id: string) =>
-    fetchApi<{ success: boolean }>(`/api/agents/${id}/restart`, { method: "POST" }),
+    fetchApi<{ success: boolean }>(`/api/agents/${id}/restart`, {
+      method: "POST",
+    }),
 
   status: (id: string) =>
     fetchApi<{ status: string }>(`/api/agents/${id}/status`),
 
-  logs: (id: string) =>
-    fetchApi<{ logs: string[] }>(`/api/agents/${id}/logs`),
+  logs: (id: string) => fetchApi<{ logs: string[] }>(`/api/agents/${id}/logs`),
 
   createTask: (id: string, task: { description: string; priority?: string }) =>
     fetchApi<{ success: boolean; taskId: string }>(`/api/agents/${id}/tasks`, {
@@ -163,13 +197,16 @@ export const agentsApi = {
 export const tasksApi = {
   list: (params?: { status?: string; limit?: number }) =>
     fetchApi<{ tasks: Task[] }>(
-      `/api/tasks${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/tasks${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
-  getById: (id: string) =>
-    fetchApi<{ task: Task }>(`/api/tasks/${id}`),
+  getById: (id: string) => fetchApi<{ task: Task }>(`/api/tasks/${id}`),
 
-  create: (data: { description: string; priority?: string; agentId?: string }) =>
+  create: (data: {
+    description: string;
+    priority?: string;
+    agentId?: string;
+  }) =>
     fetchApi<{ success: boolean; task: Task }>("/api/tasks", {
       method: "POST",
       body: JSON.stringify(data),
@@ -182,13 +219,19 @@ export const tasksApi = {
     }),
 
   statusAll: () =>
-    fetchApi<{ statuses: Record<string, string> }>("/api/agent-tasks/status/all"),
+    fetchApi<{ statuses: Record<string, string> }>(
+      "/api/agent-tasks/status/all",
+    ),
 
   workerStart: () =>
-    fetchApi<{ success: boolean }>("/api/agent-tasks/worker/start", { method: "POST" }),
+    fetchApi<{ success: boolean }>("/api/agent-tasks/worker/start", {
+      method: "POST",
+    }),
 
   workerStop: () =>
-    fetchApi<{ success: boolean }>("/api/agent-tasks/worker/stop", { method: "POST" }),
+    fetchApi<{ success: boolean }>("/api/agent-tasks/worker/stop", {
+      method: "POST",
+    }),
 };
 
 // ============================================================================
@@ -201,8 +244,7 @@ export const chatApi = {
       body: JSON.stringify({ message, agentName }),
     }),
 
-  agents: () =>
-    fetchApi<{ agents: ChatAgent[] }>("/api/chat/agents"),
+  agents: () => fetchApi<{ agents: ChatAgent[] }>("/api/chat/agents"),
 
   list: (userId: string) =>
     fetchApi<{ chats: Chat[] }>(`/api/chat/list/${userId}`),
@@ -216,8 +258,7 @@ export const chatApi = {
       body: JSON.stringify({ title }),
     }),
 
-  threads: () =>
-    fetchApi<{ threads: ChatThread[] }>("/api/chat/threads"),
+  threads: () => fetchApi<{ threads: ChatThread[] }>("/api/chat/threads"),
 
   createThread: (title: string) =>
     fetchApi<{ success: boolean; thread: ChatThread }>("/api/chat/threads", {
@@ -232,22 +273,20 @@ export const chatApi = {
 export const auditApi = {
   list: (params?: { limit?: number; kind?: string; severity?: string }) =>
     fetchApi<{ events: AuditEvent[] }>(
-      `/api/audit${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/audit${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
-  getById: (id: string) =>
-    fetchApi<{ event: AuditEvent }>(`/api/audit/${id}`),
+  getById: (id: string) => fetchApi<{ event: AuditEvent }>(`/api/audit/${id}`),
 
   stopScoreStats: () =>
     fetchApi<{ stats: StopScoreStats }>("/api/audit/stats/stop-scores"),
 
   events: (params?: { limit?: number; kind?: string }) =>
     fetchApi<{ events: AuditEvent[] }>(
-      `/api/audit/events${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/audit/events${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
-  eventStats: () =>
-    fetchApi<{ stats: EventStats }>("/api/audit/events/stats"),
+  eventStats: () => fetchApi<{ stats: EventStats }>("/api/audit/events/stats"),
 
   cleanup: (olderThanDays: number) =>
     fetchApi<{ deleted: number }>("/api/audit/events/cleanup", {
@@ -262,16 +301,15 @@ export const auditApi = {
 export const opsApi = {
   events: (params?: { limit?: number; kind?: string }) =>
     fetchApi<{ events: OpsEvent[] }>(
-      `/api/ops/events${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/ops/events${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
   tasksHistory: (params?: { limit?: number; status?: string }) =>
     fetchApi<{ tasks: Task[] }>(
-      `/api/ops/tasks/history${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/ops/tasks/history${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
-  stats: () =>
-    fetchApi<OpsStats>("/api/ops/stats"),
+  stats: () => fetchApi<OpsStats>("/api/ops/stats"),
 };
 
 // ============================================================================
@@ -296,8 +334,7 @@ export const brainApi = {
       body: JSON.stringify({ query, limit }),
     }),
 
-  docs: () =>
-    fetchApi<{ docs: BrainDoc[] }>("/api/brain/docs"),
+  docs: () => fetchApi<{ docs: BrainDoc[] }>("/api/brain/docs"),
 
   getDoc: (docId: string) =>
     fetchApi<{ doc: BrainDoc }>(`/api/brain/docs/${docId}`),
@@ -309,16 +346,16 @@ export const brainApi = {
     }),
 
   deleteDoc: (docId: string) =>
-    fetchApi<{ success: boolean }>(`/api/brain/docs/${docId}`, { method: "DELETE" }),
+    fetchApi<{ success: boolean }>(`/api/brain/docs/${docId}`, {
+      method: "DELETE",
+    }),
 
   similarDocs: (docId: string) =>
     fetchApi<{ docs: BrainDoc[] }>(`/api/brain/docs/${docId}/similar`),
 
-  stats: () =>
-    fetchApi<BrainStats>("/api/brain/stats"),
+  stats: () => fetchApi<BrainStats>("/api/brain/stats"),
 
-  proxyHealth: () =>
-    fetchApi<{ status: string }>("/api/brain/proxy/health"),
+  proxyHealth: () => fetchApi<{ status: string }>("/api/brain/proxy/health"),
 };
 
 // ============================================================================
@@ -338,7 +375,9 @@ export const memoryApi = {
     fetchApi<{ chat: MemoryChat }>(`/api/memory/chats/${chatId}/details`),
 
   chatMessages: (chatId: string) =>
-    fetchApi<{ messages: MemoryMessage[] }>(`/api/memory/chats/${chatId}/messages`),
+    fetchApi<{ messages: MemoryMessage[] }>(
+      `/api/memory/chats/${chatId}/messages`,
+    ),
 
   addMessage: (chatId: string, message: { role: string; content: string }) =>
     fetchApi<{ success: boolean }>(`/api/memory/chats/${chatId}/messages`, {
@@ -394,15 +433,16 @@ export const settingsApi = {
     fetchApi<{ value: unknown }>(`/api/settings/system/${key}`),
 
   history: (userId: string) =>
-    fetchApi<{ history: SettingsHistory[] }>(`/api/settings/history/user/${userId}`),
+    fetchApi<{ history: SettingsHistory[] }>(
+      `/api/settings/history/user/${userId}`,
+    ),
 };
 
 // ============================================================================
 // ENFORCEMENT API
 // ============================================================================
 export const enforcementApi = {
-  blocked: () =>
-    fetchApi<{ tasks: BlockedTask[] }>("/api/enforcement/blocked"),
+  blocked: () => fetchApi<{ tasks: BlockedTask[] }>("/api/enforcement/blocked"),
 
   getBlocked: (taskId: string) =>
     fetchApi<{ task: BlockedTask }>(`/api/enforcement/blocked/${taskId}`),
@@ -427,15 +467,14 @@ export const githubApi = {
   status: () =>
     fetchApi<{ connected: boolean; user?: string }>("/api/github/status"),
 
-  repos: () =>
-    fetchApi<{ repos: GithubRepo[] }>("/api/github/repos"),
+  repos: () => fetchApi<{ repos: GithubRepo[] }>("/api/github/repos"),
 
   getRepo: (owner: string, repo: string) =>
     fetchApi<{ repo: GithubRepo }>(`/api/github/repos/${owner}/${repo}`),
 
   issues: (params?: { state?: string; labels?: string }) =>
     fetchApi<{ issues: GithubIssue[] }>(
-      `/api/github/issues${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/github/issues${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
   createIssue: (data: { title: string; body: string; repo: string }) =>
@@ -444,17 +483,24 @@ export const githubApi = {
       body: JSON.stringify(data),
     }),
 
-  pulls: () =>
-    fetchApi<{ pulls: GithubPR[] }>("/api/github/pulls"),
+  pulls: () => fetchApi<{ pulls: GithubPR[] }>("/api/github/pulls"),
 
-  createPull: (data: { title: string; body: string; head: string; base: string; repo: string }) =>
+  createPull: (data: {
+    title: string;
+    body: string;
+    head: string;
+    base: string;
+    repo: string;
+  }) =>
     fetchApi<{ success: boolean; pull: GithubPR }>("/api/github/pulls", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   comments: (issueId: string) =>
-    fetchApi<{ comments: GithubComment[] }>(`/api/github/comments?issueId=${issueId}`),
+    fetchApi<{ comments: GithubComment[] }>(
+      `/api/github/comments?issueId=${issueId}`,
+    ),
 
   addComment: (issueId: string, body: string) =>
     fetchApi<{ success: boolean }>("/api/github/comments", {
@@ -467,15 +513,13 @@ export const githubApi = {
 // LINEAR INTEGRATION API
 // ============================================================================
 export const linearApi = {
-  status: () =>
-    fetchApi<{ connected: boolean }>("/api/linear/status"),
+  status: () => fetchApi<{ connected: boolean }>("/api/linear/status"),
 
-  teams: () =>
-    fetchApi<{ teams: LinearTeam[] }>("/api/linear/teams"),
+  teams: () => fetchApi<{ teams: LinearTeam[] }>("/api/linear/teams"),
 
   issues: (params?: { teamId?: string; state?: string }) =>
     fetchApi<{ issues: LinearIssue[] }>(
-      `/api/linear/issues${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/linear/issues${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
   createIssue: (data: { title: string; description: string; teamId: string }) =>
@@ -493,22 +537,18 @@ export const linearApi = {
   projects: () =>
     fetchApi<{ projects: LinearProject[] }>("/api/linear/projects"),
 
-  states: () =>
-    fetchApi<{ states: LinearState[] }>("/api/linear/states"),
+  states: () => fetchApi<{ states: LinearState[] }>("/api/linear/states"),
 
-  labels: () =>
-    fetchApi<{ labels: LinearLabel[] }>("/api/linear/labels"),
+  labels: () => fetchApi<{ labels: LinearLabel[] }>("/api/linear/labels"),
 
-  users: () =>
-    fetchApi<{ users: LinearUser[] }>("/api/linear/users"),
+  users: () => fetchApi<{ users: LinearUser[] }>("/api/linear/users"),
 };
 
 // ============================================================================
 // WEBHOOKS API
 // ============================================================================
 export const webhooksApi = {
-  list: () =>
-    fetchApi<{ webhooks: Webhook[] }>("/api/webhooks"),
+  list: () => fetchApi<{ webhooks: Webhook[] }>("/api/webhooks"),
 
   getById: (id: string) =>
     fetchApi<{ webhook: Webhook }>(`/api/webhooks/${id}`),
@@ -529,7 +569,9 @@ export const webhooksApi = {
     fetchApi<{ success: boolean }>(`/api/webhooks/${id}`, { method: "DELETE" }),
 
   deliveries: (id: string) =>
-    fetchApi<{ deliveries: WebhookDelivery[] }>(`/api/webhooks/${id}/deliveries`),
+    fetchApi<{ deliveries: WebhookDelivery[] }>(
+      `/api/webhooks/${id}/deliveries`,
+    ),
 
   allDeliveries: () =>
     fetchApi<{ deliveries: WebhookDelivery[] }>("/api/webhooks/deliveries/all"),
@@ -545,11 +587,9 @@ export const webhooksApi = {
 // MODULES API
 // ============================================================================
 export const modulesApi = {
-  list: () =>
-    fetchApi<{ modules: Module[] }>("/api/modules"),
+  list: () => fetchApi<{ modules: Module[] }>("/api/modules"),
 
-  getById: (id: string) =>
-    fetchApi<{ module: Module }>(`/api/modules/${id}`),
+  getById: (id: string) => fetchApi<{ module: Module }>(`/api/modules/${id}`),
 
   byCategory: (category: string) =>
     fetchApi<{ modules: Module[] }>(`/api/modules/category/${category}`),
@@ -557,8 +597,7 @@ export const modulesApi = {
   byStatus: (status: string) =>
     fetchApi<{ modules: Module[] }>(`/api/modules/status/${status}`),
 
-  report: () =>
-    fetchApi<{ report: ModuleReport }>("/api/modules/report"),
+  report: () => fetchApi<{ report: ModuleReport }>("/api/modules/report"),
 
   categories: () =>
     fetchApi<{ categories: string[] }>("/api/modules/categories"),
@@ -573,11 +612,10 @@ export const billingApi = {
 
   costs: (params?: { from?: string; to?: string }) =>
     fetchApi<{ costs: BillingCost[] }>(
-      `/api/billing/costs${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`
+      `/api/billing/costs${params ? "?" + new URLSearchParams(params as Record<string, string>).toString() : ""}`,
     ),
 
-  pricing: () =>
-    fetchApi<{ pricing: PricingTier[] }>("/api/billing/pricing"),
+  pricing: () => fetchApi<{ pricing: PricingTier[] }>("/api/billing/pricing"),
 };
 
 // ============================================================================
@@ -602,22 +640,18 @@ export const demoApi = {
   getUser: (userId: string) =>
     fetchApi<{ user: User }>(`/api/demo/users/${userId}`),
 
-  stats: () =>
-    fetchApi<{ stats: DemoStats }>("/api/demo/stats"),
+  stats: () => fetchApi<{ stats: DemoStats }>("/api/demo/stats"),
 };
 
 // ============================================================================
 // HEALTH API
 // ============================================================================
 export const healthApi = {
-  check: () =>
-    fetchApi<{ status: string; time: string }>("/api/health"),
+  check: () => fetchApi<{ status: string; time: string }>("/api/health"),
 
-  ready: () =>
-    fetchApi<{ ready: boolean }>("/api/health/ready"),
+  ready: () => fetchApi<{ ready: boolean }>("/api/health/ready"),
 
-  live: () =>
-    fetchApi<{ live: boolean }>("/api/health/live"),
+  live: () => fetchApi<{ live: boolean }>("/api/health/live"),
 };
 
 // ============================================================================

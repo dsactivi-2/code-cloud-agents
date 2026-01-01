@@ -4,7 +4,13 @@
  */
 
 import { useState, useEffect } from "react";
-import { auditApi, opsApi, enforcementApi, type AuditEvent, type BlockedTask } from "../lib/api";
+import {
+  auditApi,
+  opsApi,
+  enforcementApi,
+  type AuditEvent,
+  type BlockedTask,
+} from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -22,7 +28,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import {
@@ -82,7 +94,9 @@ export function AuditPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const params: { limit?: number; kind?: string; severity?: string } = { limit };
+      const params: { limit?: number; kind?: string; severity?: string } = {
+        limit,
+      };
       if (kindFilter !== "all") params.kind = kindFilter;
       if (severityFilter !== "all") params.severity = severityFilter;
 
@@ -114,7 +128,9 @@ export function AuditPage() {
       setSelectedTask(null);
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -127,7 +143,9 @@ export function AuditPage() {
       setSelectedTask(null);
       loadData();
     } catch (error: unknown) {
-      toast.error(`Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`);
+      toast.error(
+        `Fehler: ${error instanceof Error ? error.message : "Unbekannt"}`,
+      );
     }
   }
 
@@ -135,7 +153,7 @@ export function AuditPage() {
   const filteredEvents = events.filter(
     (event) =>
       event.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.kind.toLowerCase().includes(searchQuery.toLowerCase())
+      event.kind.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Severity badge
@@ -193,7 +211,9 @@ export function AuditPage() {
           </p>
         </div>
         <Button variant="outline" onClick={loadData} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
           Aktualisieren
         </Button>
       </div>
@@ -309,7 +329,10 @@ export function AuditPage() {
                 <SelectItem value="error">Fehler</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={limit.toString()} onValueChange={(v) => setLimit(Number(v))}>
+            <Select
+              value={limit.toString()}
+              onValueChange={(v) => setLimit(Number(v))}
+            >
               <SelectTrigger className="w-[100px]">
                 <SelectValue />
               </SelectTrigger>
@@ -344,7 +367,10 @@ export function AuditPage() {
                     </TableRow>
                   ) : filteredEvents.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      <TableCell
+                        colSpan={5}
+                        className="text-center py-8 text-muted-foreground"
+                      >
                         Keine Events gefunden
                       </TableCell>
                     </TableRow>
@@ -360,7 +386,9 @@ export function AuditPage() {
                           {new Date(event.ts).toLocaleString("de-DE")}
                         </TableCell>
                         <TableCell>{getKindBadge(event.kind)}</TableCell>
-                        <TableCell>{getSeverityBadge(event.severity)}</TableCell>
+                        <TableCell>
+                          {getSeverityBadge(event.severity)}
+                        </TableCell>
                         <TableCell className="max-w-[400px] truncate">
                           {event.message}
                         </TableCell>
@@ -405,11 +433,15 @@ export function AuditPage() {
                   <TableBody>
                     {blockedTasks.map((task) => (
                       <TableRow key={task.id}>
-                        <TableCell className="font-mono">{task.taskId.slice(0, 8)}...</TableCell>
+                        <TableCell className="font-mono">
+                          {task.taskId.slice(0, 8)}...
+                        </TableCell>
                         <TableCell>{task.reason}</TableCell>
                         <TableCell>
                           <Badge
-                            variant={task.stopScore >= 70 ? "destructive" : "secondary"}
+                            variant={
+                              task.stopScore >= 70 ? "destructive" : "secondary"
+                            }
                           >
                             {task.stopScore}
                           </Badge>
@@ -463,8 +495,13 @@ export function AuditPage() {
                 {eventStats?.byKind ? (
                   <div className="space-y-2">
                     {Object.entries(eventStats.byKind).map(([kind, count]) => (
-                      <div key={kind} className="flex justify-between items-center">
-                        <span className="text-sm">{kind.replace(/_/g, " ")}</span>
+                      <div
+                        key={kind}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="text-sm">
+                          {kind.replace(/_/g, " ")}
+                        </span>
                         <Badge variant="secondary">{count}</Badge>
                       </div>
                     ))}
@@ -481,13 +518,18 @@ export function AuditPage() {
               <CardContent>
                 {eventStats?.bySeverity ? (
                   <div className="space-y-2">
-                    {Object.entries(eventStats.bySeverity).map(([severity, count]) => (
-                      <div key={severity} className="flex justify-between items-center">
-                        <span className="text-sm capitalize">{severity}</span>
-                        {getSeverityBadge(severity)}
-                        <Badge variant="outline">{count}</Badge>
-                      </div>
-                    ))}
+                    {Object.entries(eventStats.bySeverity).map(
+                      ([severity, count]) => (
+                        <div
+                          key={severity}
+                          className="flex justify-between items-center"
+                        >
+                          <span className="text-sm capitalize">{severity}</span>
+                          {getSeverityBadge(severity)}
+                          <Badge variant="outline">{count}</Badge>
+                        </div>
+                      ),
+                    )}
                   </div>
                 ) : (
                   <p className="text-muted-foreground">Keine Daten</p>
@@ -499,7 +541,10 @@ export function AuditPage() {
       </Tabs>
 
       {/* Event Detail Dialog */}
-      <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
+      <Dialog
+        open={!!selectedEvent}
+        onOpenChange={() => setSelectedEvent(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Event Details</DialogTitle>
@@ -547,12 +592,15 @@ export function AuditPage() {
           <DialogHeader>
             <DialogTitle>Task genehmigen</DialogTitle>
             <DialogDescription>
-              Möchten Sie diesen Task wirklich genehmigen? Der STOP-Score beträgt{" "}
-              <strong>{selectedTask?.stopScore}</strong>.
+              Möchten Sie diesen Task wirklich genehmigen? Der STOP-Score
+              beträgt <strong>{selectedTask?.stopScore}</strong>.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setApproveDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setApproveDialogOpen(false)}
+            >
               Abbrechen
             </Button>
             <Button onClick={handleApprove}>Genehmigen</Button>
