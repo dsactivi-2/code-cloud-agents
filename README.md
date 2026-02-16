@@ -162,6 +162,7 @@ Vollständige Dokumentation in `docs/`:
 - **[Developer Guide](docs/DEVELOPER_GUIDE.md)**: Setup, Entwicklung, Testing
 - **[Architecture](docs/ARCHITECTURE.md)**: System-Design, Datenmodelle, Flows
 - **[Contributing](docs/CONTRIBUTING.md)**: Contribution-Guidelines, Code-Standards
+- **[Agent Installation Guide](docs/AGENT_INSTALLATION_GUIDE.md)**: 🆕 Agents installieren und konfigurieren
 
 ---
 
