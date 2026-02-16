@@ -23,6 +23,7 @@ examples/
 **Datei:** `agents/DataProcessorAgent.example.md`
 
 **Features:**
+
 - CSV/JSON Parsing
 - Datenvalidierung
 - Duplikat-Erkennung
@@ -30,6 +31,7 @@ examples/
 - Error Reporting
 
 **Use Cases:**
+
 - Import von User-Daten
 - Validierung von API-Responses
 - ETL-Prozesse
@@ -82,19 +84,24 @@ Möchtest du ein Beispiel hinzufügen?
 4. Erstelle einen Pull Request
 
 **Template-Struktur:**
+
 ```markdown
 # Example: [Agent Name]
 
 ## Claude Code Version
+
 [Minimal Example]
 
 ## System Agent Version
+
 [Full Implementation]
 
 ## Usage
+
 [How to use]
 
 ## Extensions
+
 [Possible enhancements]
 ```
 

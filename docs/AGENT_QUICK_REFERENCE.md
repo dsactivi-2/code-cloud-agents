@@ -9,11 +9,13 @@
 ### 1. Claude Code Agents (Skills)
 
 **Speicherort:**
+
 ```
 .claude/commands/[agent-name].md
 ```
 
 **Verwendung:**
+
 - Spezialisierte Sub-Agents für Entwicklungsaufgaben
 - Werden automatisch als Skills in Claude Code erkannt
 - Keine Backend-Integration nötig
@@ -21,11 +23,13 @@
 ### 2. System Agents (Backend)
 
 **Speicherort:**
+
 ```
 src/agents/[AgentName].ts
 ```
 
 **Verwendung:**
+
 - Backend API Agents für Task-Execution
 - Über REST API steuerbar
 - Teil der Supervisor-Hierarchie
@@ -53,10 +57,12 @@ allowed-tools: Read, Write, Edit, Bash(npm:*)
 $ARGUMENTS
 
 ## Aufgabe
+
 1. Schritt 1
 2. Schritt 2
 
 ## Regeln
+
 - **IMMER**: ...
 - **NIEMALS**: ...
 ```
@@ -77,16 +83,19 @@ Nutze den mein-agent für [Aufgabe]
 
 ```typescript
 // src/agents/MyAgent.ts
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export class MyAgent extends EventEmitter {
-  constructor(public id: string, public name: string) {
+  constructor(
+    public id: string,
+    public name: string,
+  ) {
     super();
   }
 
   async execute(task: string): Promise<void> {
     // Deine Logik hier
-    this.emit('task_completed', { task });
+    this.emit("task_completed", { task });
   }
 }
 ```
@@ -95,9 +104,9 @@ export class MyAgent extends EventEmitter {
 
 ```typescript
 // src/index.ts
-import { MyAgent } from './agents/MyAgent';
+import { MyAgent } from "./agents/MyAgent";
 
-const myAgent = new MyAgent('agent_my', 'MY_AGENT');
+const myAgent = new MyAgent("agent_my", "MY_AGENT");
 agentManager.registerAgent(myAgent);
 ```
 
@@ -105,7 +114,7 @@ agentManager.registerAgent(myAgent);
 
 ```typescript
 // src/api/agents.ts
-router.post('/:agentId/execute', async (req, res) => {
+router.post("/:agentId/execute", async (req, res) => {
   await agentManager.executeTask(req.params.agentId, req.body.task);
   res.json({ success: true });
 });
@@ -126,12 +135,14 @@ curl -X POST http://localhost:3000/api/agents/agent_my/execute \
 ## 📋 Checkliste
 
 ### Claude Code Agent
+
 - [ ] `.claude/commands/[name].md` erstellt
 - [ ] Front Matter mit `description` und `allowed-tools`
 - [ ] Anweisungen geschrieben
 - [ ] Getestet mit Claude Code
 
 ### System Agent
+
 - [ ] `src/agents/[Name].ts` erstellt
 - [ ] EventEmitter implementiert
 - [ ] In AgentManager registriert
@@ -145,21 +156,25 @@ curl -X POST http://localhost:3000/api/agents/agent_my/execute \
 ### Empfohlene Tools je nach Agent-Typ
 
 **Code-Editor Agent:**
+
 ```yaml
 allowed-tools: Read, Write, Edit, Grep, Glob
 ```
 
 **Build/Test Agent:**
+
 ```yaml
 allowed-tools: Read, Bash(npm:*), Bash(git:*)
 ```
 
 **Database Agent:**
+
 ```yaml
 allowed-tools: Read, Write, Bash(npm:*), Bash(sqlite3:*)
 ```
 
 **Full Access (vorsichtig!):**
+
 ```yaml
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(*), GitWrite
 ```
@@ -171,6 +186,7 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash(*), GitWrite
 ### Bestehende Claude Code Agents
 
 Siehe als Referenz:
+
 - `.claude/commands/implement.md` - Feature Implementation
 - `.claude/commands/fix.md` - Bug Fixing
 - `.claude/commands/test.md` - Test Writing
@@ -189,6 +205,7 @@ Siehe als Referenz:
 ### Agent wird nicht erkannt
 
 **Claude Code Agent:**
+
 ```bash
 # Restart Claude Code
 # Prüfe Front Matter Format (--- lines)
@@ -196,6 +213,7 @@ Siehe als Referenz:
 ```
 
 **System Agent:**
+
 ```bash
 # Prüfe Logs
 npm run backend:dev
@@ -207,18 +225,21 @@ curl http://localhost:3000/api/agents
 ### Permissions Error
 
 **Claude Code:**
+
 ```markdown
 # Füge benötigte Tools hinzu:
-allowed-tools: Read, Write, Bash(npm:*)
+
+allowed-tools: Read, Write, Bash(npm:\*)
 ```
 
 **System:**
+
 ```typescript
 // Prüfe Error Handling
 try {
   await agent.execute(task);
 } catch (error) {
-  console.error('Agent error:', error);
+  console.error("Agent error:", error);
 }
 ```
 

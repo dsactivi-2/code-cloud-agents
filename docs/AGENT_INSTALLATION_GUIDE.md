@@ -38,6 +38,7 @@ Dieses Repository unterstützt zwei verschiedene Arten von Cloud Agents:
 **Zweck:** Spezialisierte Assistenten für spezifische Entwicklungsaufgaben
 
 **Bestehende Agents:**
+
 - `agent-status` - Status-Reporting aller Agents
 - `design` - UI/UX Design Review
 - `docs` - Dokumentation erstellen/aktualisieren
@@ -54,6 +55,7 @@ Dieses Repository unterstützt zwei verschiedene Arten von Cloud Agents:
 **Zweck:** Supervisor-System für Task-Execution und Monitoring
 
 **Agents in der Hierarchie:**
+
 ```
 META_SUPERVISOR
     ↓
@@ -98,10 +100,12 @@ Deine Agent-Anweisung: $ARGUMENTS
 ## Vorgehen
 
 ### 1. Schritt 1 Name
+
 - Beschreibung was zu tun ist
 - Details zur Ausführung
 
 ### 2. Schritt 2 Name
+
 - Weitere Schritte...
 
 ## Regeln
@@ -111,10 +115,12 @@ Deine Agent-Anweisung: $ARGUMENTS
 - Weitere wichtige Regeln...
 
 ## Output Format
+```
+
+Erwartetes Output-Format definieren
 
 ```
-Erwartetes Output-Format definieren
-```
+
 ```
 
 ### Schritt 3: Beispiel für einen neuen Agent
@@ -134,21 +140,25 @@ Führe Datenbank-Operation aus: $ARGUMENTS
 ## Vorgehen
 
 ### 1. Analyse
+
 - Verstehe die gewünschte Datenbank-Operation
 - Prüfe bestehende Schema-Struktur
 - Identifiziere Abhängigkeiten
 
 ### 2. Migration erstellen (falls nötig)
+
 - Erstelle Migration-Datei mit Timestamp
 - Definiere `up` und `down` Funktionen
 - Berücksichtige bestehende Daten
 
 ### 3. Ausführung
+
 - Backup erstellen (falls produktiv)
 - Migration ausführen
 - Verifiziere Ergebnis
 
 ### 4. Dokumentation
+
 - Aktualisiere Schema-Dokumentation
 - Füge JSDoc zu neuen Models hinzu
 - Update README wenn nötig
@@ -161,28 +171,34 @@ Führe Datenbank-Operation aus: $ARGUMENTS
 - Bei Unsicherheit: Erst nachfragen
 
 ## Output Format
-
 ```
+
 ## Migration: [Name]
 
 ### Änderungen
+
 - Tabelle X: Spalte Y hinzugefügt
 - Index auf Z erstellt
 
 ### Ausgeführt
+
 ✅ Migration erfolgreich
 ✅ Daten migriert: X Einträge
 ✅ Dokumentation aktualisiert
 
 ### Rollback
+
 Migration kann mit `npm run db:rollback` rückgängig gemacht werden
+
 ```
+
 ```
 
 ### Schritt 4: Agent testen
 
 1. **Restart Claude Code** (falls bereits offen)
 2. **Agent aufrufen:**
+
    ```
    Nutze den database agent um eine neue Tabelle zu erstellen
    ```
@@ -213,9 +229,9 @@ System Agents sind Backend-Services die über die API gesteuert werden.
 **Datei:** `src/agents/MyCustomAgent.ts`
 
 ```typescript
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
-export type AgentState = 'idle' | 'working' | 'stopped' | 'error';
+export type AgentState = "idle" | "working" | "stopped" | "error";
 
 export interface AgentMetrics {
   tasksCompleted: number;
@@ -231,7 +247,7 @@ export interface AgentMetrics {
 export class MyCustomAgent extends EventEmitter {
   public id: string;
   public name: string;
-  private state: AgentState = 'idle';
+  private state: AgentState = "idle";
   private currentTask: string | null = null;
   private metrics: AgentMetrics;
 
@@ -254,26 +270,26 @@ export class MyCustomAgent extends EventEmitter {
    */
   async execute(task: string): Promise<void> {
     try {
-      this.setState('working');
+      this.setState("working");
       this.currentTask = task;
       this.metrics.tasksInProgress++;
-      
+
       // Your agent logic here
       console.log(`${this.name} executing: ${task}`);
-      
+
       // Simulate work
       await this.performTask(task);
-      
+
       this.metrics.tasksCompleted++;
       this.metrics.tasksInProgress--;
-      this.setState('idle');
+      this.setState("idle");
       this.currentTask = null;
-      
-      this.emit('task_completed', { task, agentId: this.id });
+
+      this.emit("task_completed", { task, agentId: this.id });
     } catch (error) {
       this.metrics.errorCount++;
-      this.setState('error');
-      this.emit('task_failed', { task, error, agentId: this.id });
+      this.setState("error");
+      this.emit("task_failed", { task, error, agentId: this.id });
     } finally {
       this.metrics.lastActivity = new Date();
     }
@@ -293,7 +309,7 @@ export class MyCustomAgent extends EventEmitter {
   private setState(newState: AgentState): void {
     const oldState = this.state;
     this.state = newState;
-    this.emit('state_changed', {
+    this.emit("state_changed", {
       agentId: this.id,
       oldState,
       newState,
@@ -318,17 +334,17 @@ export class MyCustomAgent extends EventEmitter {
    * Stop agent
    */
   public stop(reason?: string): void {
-    this.setState('stopped');
-    this.emit('agent_stopped', { agentId: this.id, reason });
+    this.setState("stopped");
+    this.emit("agent_stopped", { agentId: this.id, reason });
   }
 
   /**
    * Start/Resume agent
    */
   public start(): void {
-    if (this.state === 'stopped') {
-      this.setState('idle');
-      this.emit('agent_started', { agentId: this.id });
+    if (this.state === "stopped") {
+      this.setState("idle");
+      this.emit("agent_started", { agentId: this.id });
     }
   }
 }
@@ -339,7 +355,7 @@ export class MyCustomAgent extends EventEmitter {
 **Datei:** `src/agents/AgentManager.ts`
 
 ```typescript
-import { MyCustomAgent } from './MyCustomAgent';
+import { MyCustomAgent } from "./MyCustomAgent";
 
 export class AgentManager {
   private agents: Map<string, MyCustomAgent> = new Map();
@@ -349,17 +365,19 @@ export class AgentManager {
    */
   registerAgent(agent: MyCustomAgent): void {
     this.agents.set(agent.id, agent);
-    
+
     // Listen to agent events
-    agent.on('state_changed', (event) => {
-      console.log(`Agent ${event.agentId} state: ${event.oldState} → ${event.newState}`);
+    agent.on("state_changed", (event) => {
+      console.log(
+        `Agent ${event.agentId} state: ${event.oldState} → ${event.newState}`,
+      );
     });
-    
-    agent.on('task_completed', (event) => {
+
+    agent.on("task_completed", (event) => {
       console.log(`Agent ${event.agentId} completed task: ${event.task}`);
     });
-    
-    agent.on('task_failed', (event) => {
+
+    agent.on("task_failed", (event) => {
       console.error(`Agent ${event.agentId} failed:`, event.error);
     });
   }
@@ -386,7 +404,7 @@ export class AgentManager {
     if (!agent) {
       throw new Error(`Agent ${agentId} not found`);
     }
-    
+
     await agent.execute(task);
   }
 }
@@ -397,17 +415,14 @@ export class AgentManager {
 **Datei:** `src/index.ts` (oder Ihre Haupt-Backend-Datei)
 
 ```typescript
-import { MyCustomAgent } from './agents/MyCustomAgent';
-import { AgentManager } from './agents/AgentManager';
+import { MyCustomAgent } from "./agents/MyCustomAgent";
+import { AgentManager } from "./agents/AgentManager";
 
 // Initialize Agent Manager
 const agentManager = new AgentManager();
 
 // Create and register your custom agent
-const myAgent = new MyCustomAgent(
-  'agent_my_custom_agent',
-  'MY_CUSTOM_AGENT'
-);
+const myAgent = new MyCustomAgent("agent_my_custom_agent", "MY_CUSTOM_AGENT");
 
 agentManager.registerAgent(myAgent);
 
@@ -420,8 +435,8 @@ export { agentManager };
 **Datei:** `src/api/agents.ts`
 
 ```typescript
-import express from 'express';
-import { agentManager } from '../index';
+import express from "express";
+import { agentManager } from "../index";
 
 const router = express.Router();
 
@@ -429,11 +444,11 @@ const router = express.Router();
  * GET /api/agents
  * List all agents
  */
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   const agents = agentManager.getAllAgents();
   res.json({
     success: true,
-    agents: agents.map(agent => ({
+    agents: agents.map((agent) => ({
       id: agent.id,
       name: agent.name,
       state: agent.getState(),
@@ -447,28 +462,28 @@ router.get('/', (req, res) => {
  * POST /api/agents/:agentId/execute
  * Execute task on agent
  */
-router.post('/:agentId/execute', async (req, res) => {
+router.post("/:agentId/execute", async (req, res) => {
   try {
     const { agentId } = req.params;
     const { task } = req.body;
-    
+
     if (!task) {
       return res.status(400).json({
         success: false,
-        error: 'Task description required',
+        error: "Task description required",
       });
     }
-    
+
     await agentManager.executeTask(agentId, task);
-    
+
     res.json({
       success: true,
-      message: 'Task submitted successfully',
+      message: "Task submitted successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -511,51 +526,51 @@ MY_AGENT_TIMEOUT=30000
 **Datei:** `tests/agents/MyCustomAgent.test.ts`
 
 ```typescript
-import { MyCustomAgent } from '../../src/agents/MyCustomAgent';
+import { MyCustomAgent } from "../../src/agents/MyCustomAgent";
 
-describe('MyCustomAgent', () => {
+describe("MyCustomAgent", () => {
   let agent: MyCustomAgent;
 
   beforeEach(() => {
-    agent = new MyCustomAgent('test_agent', 'TEST_AGENT');
+    agent = new MyCustomAgent("test_agent", "TEST_AGENT");
   });
 
-  it('should initialize with idle state', () => {
-    expect(agent.getState()).toBe('idle');
+  it("should initialize with idle state", () => {
+    expect(agent.getState()).toBe("idle");
   });
 
-  it('should execute task successfully', async () => {
-    const taskPromise = agent.execute('Test task');
-    
-    expect(agent.getState()).toBe('working');
-    
+  it("should execute task successfully", async () => {
+    const taskPromise = agent.execute("Test task");
+
+    expect(agent.getState()).toBe("working");
+
     await taskPromise;
-    
-    expect(agent.getState()).toBe('idle');
+
+    expect(agent.getState()).toBe("idle");
     const metrics = agent.getMetrics();
     expect(metrics.tasksCompleted).toBe(1);
   });
 
-  it('should emit task_completed event', async () => {
+  it("should emit task_completed event", async () => {
     const eventPromise = new Promise((resolve) => {
-      agent.on('task_completed', resolve);
+      agent.on("task_completed", resolve);
     });
-    
-    await agent.execute('Test task');
-    
+
+    await agent.execute("Test task");
+
     const event = await eventPromise;
     expect(event).toMatchObject({
-      task: 'Test task',
-      agentId: 'test_agent',
+      task: "Test task",
+      agentId: "test_agent",
     });
   });
 
-  it('should stop and start agent', () => {
-    agent.stop('Maintenance');
-    expect(agent.getState()).toBe('stopped');
-    
+  it("should stop and start agent", () => {
+    agent.stop("Maintenance");
+    expect(agent.getState()).toBe("stopped");
+
     agent.start();
-    expect(agent.getState()).toBe('idle');
+    expect(agent.getState()).toBe("idle");
   });
 });
 ```
@@ -575,6 +590,7 @@ npm test -- MyCustomAgent.test.ts
 **Problem:** Agent erscheint nicht in der Skill-Liste
 
 **Lösung:**
+
 1. Stelle sicher, dass die Datei im `.claude/commands/` Verzeichnis liegt
 2. Prüfe, dass der Front Matter (---) korrekt formatiert ist
 3. Restart Claude Code
@@ -585,6 +601,7 @@ npm test -- MyCustomAgent.test.ts
 **Problem:** Agent kann nicht initialisiert werden
 
 **Lösung:**
+
 1. Prüfe Logs: `npm run backend:dev`
 2. Stelle sicher, dass alle Dependencies installiert sind: `npm install`
 3. Prüfe Environment Variables in `.env`
@@ -595,6 +612,7 @@ npm test -- MyCustomAgent.test.ts
 **Problem:** Task wird submitted aber nicht ausgeführt
 
 **Lösung:**
+
 1. Prüfe Agent State: `curl http://localhost:3000/api/agents/agent_id`
 2. Prüfe Agent Logs: `curl http://localhost:3000/api/agents/agent_id/logs`
 3. Stelle sicher, dass Agent nicht `stopped` ist
@@ -605,6 +623,7 @@ npm test -- MyCustomAgent.test.ts
 **Problem:** Agent hat keine Berechtigung für bestimmte Operations
 
 **Lösung:**
+
 1. **Claude Code Agent:** Prüfe `allowed-tools` im Front Matter
 2. **System Agent:** Prüfe Authentication/Authorization im Backend
 3. Prüfe Dateisystem-Berechtigungen bei File Operations
@@ -623,6 +642,7 @@ npm test -- MyCustomAgent.test.ts
 ### Beispiele
 
 Siehe bestehende Agents für Referenz:
+
 - `.claude/commands/implement.md` - Gut dokumentierter Claude Code Agent
 - `src/agents/` - System Agent Implementierungen
 
@@ -669,9 +689,11 @@ allowed-tools: Read, Write
 $ARGUMENTS
 
 ## Aufgabe
+
 - Was zu tun ist
 
 ## Regeln
+
 - **IMMER**: ...
 - **NIEMALS**: ...
 ```
@@ -679,12 +701,12 @@ $ARGUMENTS
 ### Minimal System Agent
 
 ```typescript
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 export class MinimalAgent extends EventEmitter {
   public id: string;
   public name: string;
-  private state: 'idle' | 'working' = 'idle';
+  private state: "idle" | "working" = "idle";
 
   constructor(id: string, name: string) {
     super();
@@ -693,13 +715,15 @@ export class MinimalAgent extends EventEmitter {
   }
 
   async execute(task: string): Promise<void> {
-    this.state = 'working';
+    this.state = "working";
     // Your logic here
-    this.state = 'idle';
-    this.emit('task_completed', { task });
+    this.state = "idle";
+    this.emit("task_completed", { task });
   }
 
-  getState() { return this.state; }
+  getState() {
+    return this.state;
+  }
 }
 ```
 
